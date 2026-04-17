@@ -258,9 +258,11 @@ body, html { margin: 0; padding: 0; width: 100%; min-height: 100vh; background-c
 
 /* ── Floating app logos — physical stickers scattered across the canvas ── */
 .floating-tool {
-    position: absolute;
-    width: clamp(56px, 5vw, 75px);
-    height: auto;
+    position: absolute !important;
+    width: clamp(56px, 5vw, 75px) !important;
+    max-width: 75px !important;
+    height: auto !important;
+    max-height: 75px !important;
     object-fit: contain;
     border-radius: 14px;
     background: #fff;
@@ -272,6 +274,7 @@ body, html { margin: 0; padding: 0; width: 100%; min-height: 100vh; background-c
     transition: transform .4s cubic-bezier(.2,.8,.2,1);
     pointer-events: auto;
     cursor: grab;
+    box-sizing: border-box;
 }
 .floating-tool:hover {
     transform: scale(1.18) rotate(0deg) !important;

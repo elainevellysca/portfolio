@@ -83,7 +83,7 @@
                     </div>
                 </div>
                 <div class="film-strip-wrapper float-el-fast">
-                    <img src="photo.png" alt="Film Strip" class="film-strip-asset">
+                    <img src="photo.jpg" alt="Film Strip" class="film-strip-asset">
                 </div>
                 <div class="about-title float-el-slow">
                     <span class="about-small">ABOUT</span>
@@ -93,53 +93,77 @@
         </div>
     </div>
     <div class="section hidden" id="skillsScreen" data-index="2">
+        <!-- Background watermark -->
         <div class="skills-bg-text">TOOLKIT</div>
-        
-        <div class="skills-container">
-            <div class="skills-header">
-                <h2 class="skills-heading">My <em>Skills</em></h2>
-                <p class="skills-sub">The creative arsenal</p>
-            </div>
-            
-            <div class="skills-grid">
-                <img src="canva.png" class="skill-logo logo-canva" alt="Canva">
-                <img src="capcut.jpg" class="skill-logo logo-capcut" alt="CapCut">
-                <img src="googledocs.png" class="skill-logo logo-docs" alt="Google Docs">
-                <img src="googlesheets.png" class="skill-logo logo-sheets" alt="Google Sheets">
 
-                <div class="skill-card card-taupe">
-                    <div class="tape-top"></div>
-                    <span class="skill-num-mobile">skill 01</span>
-                    <h3>Strategic<br>Content Planning</h3>
-                    <p>Developing comprehensive monthly content calendars and editorial plans aligned with brand identity and marketing objectives.</p>
-                    <img src="googlesheets.png" class="skill-card-logo-mobile" alt="">
-                </div>
-                
-                <div class="skill-card card-pink">
-                    <div class="tape-top"></div>
-                    <span class="skill-num-mobile">skill 02</span>
-                    <h3>Copywriting<br>& Messaging</h3>
-                    <p>Crafting compelling captions and on-screen text that drive audience engagement and call-to-action (CTA) responses.</p>
-                    <img src="googledocs.png" class="skill-card-logo-mobile" alt="">
-                </div>
-                
-                <div class="skill-card card-beige">
-                    <div class="tape-top"></div>
-                    <span class="skill-num-mobile">skill 03</span>
-                    <h3>Performance<br>Data Analysis</h3>
-                    <p>Monitoring and interpreting platform analytics (reach, engagement, watch time) to measure content effectiveness.</p>
-                    <img src="googlesheets.png" class="skill-card-logo-mobile" alt="">
-                </div>
+        <!-- Floating app stickers (decorative, animated) -->
+        <img src="canva.png" class="floating-tool tool-canva" alt="Canva" width="75" height="75">
+        <img src="capcut.jpg" class="floating-tool tool-capcut" alt="CapCut" width="75" height="75">
+        <img src="googledocs.png" class="floating-tool tool-docs" alt="Google Docs" width="75" height="75">
+        <img src="googlesheets.png" class="floating-tool tool-sheets" alt="Google Sheets" width="75" height="75">
 
-                <div class="skill-card card-peach">
-                    <div class="tape-top"></div>
-                    <span class="skill-num-mobile">skill 04</span>
-                    <h3>End-to-End<br>Content Creation</h3>
-                    <p>Managing the full production lifecycle, including scriptwriting, storyboarding, filming, and high-level video editing.</p>
-                    <img src="capcut.jpg" class="skill-card-logo-mobile" alt="">
-                    <img src="canva.png" class="skill-card-logo-mobile skill-card-logo-mobile-2" alt="">
+        <div class="skills-stage">
+            <!-- Left: header column -->
+            <div class="skills-intro">
+                <span class="skills-eyebrow">things i'm good at ✦</span>
+                <h2 class="skills-heading">My<br><em>Skills</em></h2>
+                <p class="skills-tagline">A curated toolkit of branding, content, and storytelling — built over years of trial, error, and good coffee.</p>
+                <div class="skills-decor">
+                    <svg viewBox="0 0 80 30" fill="none" aria-hidden="true">
+                        <path d="M4 18 Q25 4 50 18 Q66 26 76 14" stroke="#c93030" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M68 8 L76 14 L66 20" stroke="#c93030" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                 </div>
             </div>
+
+            <!-- Right: skill list (numbered, compact) -->
+            <ol class="skills-list">
+                <li class="skills-entry">
+                    <span class="skills-entry-num">01</span>
+                    <div class="skills-entry-body">
+                        <h3 class="skills-entry-title">Strategic Content Planning</h3>
+                        <p class="skills-entry-desc">Monthly content calendars and editorial plans aligned with brand identity.</p>
+                        <div class="skills-entry-tools">
+                            <img src="googlesheets.png" alt="Google Sheets">
+                            <span>powered by sheets</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="skills-entry">
+                    <span class="skills-entry-num">02</span>
+                    <div class="skills-entry-body">
+                        <h3 class="skills-entry-title">Copywriting & Messaging</h3>
+                        <p class="skills-entry-desc">Compelling captions and on-screen text that drive engagement and CTAs.</p>
+                        <div class="skills-entry-tools">
+                            <img src="googledocs.png" alt="Google Docs">
+                            <span>drafted in docs</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="skills-entry">
+                    <span class="skills-entry-num">03</span>
+                    <div class="skills-entry-body">
+                        <h3 class="skills-entry-title">Performance Data Analysis</h3>
+                        <p class="skills-entry-desc">Tracking reach, engagement, and watch time to measure content effectiveness.</p>
+                        <div class="skills-entry-tools">
+                            <img src="googlesheets.png" alt="Google Sheets">
+                            <span>numbers in sheets</span>
+                        </div>
+                    </div>
+                </li>
+                <li class="skills-entry">
+                    <span class="skills-entry-num">04</span>
+                    <div class="skills-entry-body">
+                        <h3 class="skills-entry-title">End-to-End Content Creation</h3>
+                        <p class="skills-entry-desc">Scriptwriting, storyboarding, filming, and high-level video editing.</p>
+                        <div class="skills-entry-tools">
+                            <img src="capcut.jpg" alt="CapCut">
+                            <img src="canva.png" alt="Canva">
+                            <span>capcut + canva</span>
+                        </div>
+                    </div>
+                </li>
+            </ol>
         </div>
     </div>
 
