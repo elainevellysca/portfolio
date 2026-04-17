@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#fcf9f5">
+    <title>Elaine Vellysca · Content Creator & Branding Portfolio</title>
+    <meta name="description" content="Branding student & content creator. TikTok food creator @platedside (222K+ views), social media management, and end-to-end video production. Jakarta-based.">
+    <meta name="author" content="Elaine Vellysca">
+
+    <!-- Open Graph (LinkedIn, WhatsApp, Discord, etc.) -->
+    <meta property="og:title" content="Elaine Vellysca · Content Creator">
+    <meta property="og:description" content="Branding student & content creator. Food, lifestyle, and social media storytelling.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="elaine.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Elaine Vellysca · Content Creator">
+    <meta name="twitter:description" content="Branding student & content creator. Food, lifestyle, and social media storytelling.">
+
+    <!-- Favicon (inline SVG with a camera emoji) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📸%3C/text%3E%3C/svg%3E">
+
+    <!-- Preload critical images so they're decoded before the intro animation runs -->
+    <link rel="preload" as="image" href="elaine.png" fetchpriority="high">
+    <link rel="preload" as="image" href="camera.png" fetchpriority="high">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Paytone+One&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Alex+Brush&family=Bebas+Neue&family=Permanent+Marker&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="flash-overlay"></div>
+
+    <nav class="dot-nav hidden" id="dotNav" aria-label="Section navigation">
+        <button class="dot active" data-index="0" aria-label="Intro" data-label="intro"></button>
+        <button class="dot" data-index="1" aria-label="About" data-label="about"></button>
+        <button class="dot" data-index="2" aria-label="Skills" data-label="skills"></button>
+        <button class="dot" data-index="3" aria-label="Experiences" data-label="experience"></button>
+        <button class="dot" data-index="4" aria-label="Contact" data-label="contact"></button>
+    </nav>
+
+    <div class="camera-container" id="cameraScreen">
+        <img src="camera.png" alt="Instax Camera" class="camera-img" loading="eager" decoding="sync" fetchpriority="high">
+    </div>
+
+    <!-- SCREEN 1: INTRO -->
+    <div class="section hidden" id="introScreen" data-index="0">
+        <div class="big-name"><span>ELAINE</span><span>VELLYSCA</span></div>
+        <span class="intro-tagline">content creator <span class="tagline-dot">·</span> branding student <span class="tagline-dot">·</span> jakarta</span>
+        <div class="note note-1" data-text="Hi. Since you're new here."></div>
+        <div class="note note-2" data-text="let me be ya tour guide"></div>
+        <div class="note note-3" data-text="This is Elaine"></div>
+        <img src="elaine.png" alt="Elaine Vellysca" class="portrait-img" loading="eager" decoding="sync" fetchpriority="high">
+        <div class="scroll-cta" id="scrollCta">
+            <span class="scroll-label">scroll to explore</span>
+            <div class="scroll-arrow">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v14M4 11l6 6 6-6" stroke="#CDBBA7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: ABOUT -->
+    <div class="section hidden" id="aboutScreen" data-index="1">
+        <div class="about-container">
+            <div class="about-inner">
+                <!-- Mobile-only: polaroid intro card -->
+                <div class="about-polaroid-mobile">
+                    <div class="about-polaroid-frame">
+                        <div class="about-polaroid-photo">
+                            <img src="elaine.png" alt="Elaine Vellysca" loading="eager" decoding="sync">
+                        </div>
+                        <span class="about-polaroid-cap">hi, it's me ✨</span>
+                    </div>
+                </div>
+                <div class="notebook-wrapper float-el">
+                    <img src="book.png" alt="Blank Notebook" class="notebook-asset">
+                    <div class="notebook-text-overlay">
+                        <h3 class="notebook-title bio-line" data-text="Hi, I'm Elaine Vellysca"></h3>
+                        <p class="notebook-p bio-line" data-text="Branding student at Prasetiya Mulya University with a passion for social media and content creation. I enjoy transforming ideas into visually appealing and engaging content, especially in the food and lifestyle space."></p>
+                        <p class="notebook-p bio-line" data-text="I'm driven to create content that not only looks aesthetic but also connects with audiences and transform creative concepts into professional digital assets that drive brand resonance."></p>
+                        <span class="about-signature-mobile">— Elaine</span>
+                    </div>
+                </div>
+                <div class="film-strip-wrapper float-el-fast">
+                    <img src="photo.png" alt="Film Strip" class="film-strip-asset">
+                </div>
+                <div class="about-title float-el-slow">
+                    <span class="about-small">ABOUT</span>
+                    <span class="about-large">Me</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section hidden" id="skillsScreen" data-index="2">
+        <div class="skills-bg-text">TOOLKIT</div>
+        
+        <div class="skills-container">
+            <div class="skills-header">
+                <h2 class="skills-heading">My <em>Skills</em></h2>
+                <p class="skills-sub">The creative arsenal</p>
+            </div>
+            
+            <div class="skills-grid">
+                <img src="canva.png" class="skill-logo logo-canva" alt="Canva">
+                <img src="capcut.jpg" class="skill-logo logo-capcut" alt="CapCut">
+                <img src="googledocs.png" class="skill-logo logo-docs" alt="Google Docs">
+                <img src="googlesheets.png" class="skill-logo logo-sheets" alt="Google Sheets">
+
+                <div class="skill-card card-taupe">
+                    <div class="tape-top"></div>
+                    <span class="skill-num-mobile">skill 01</span>
+                    <h3>Strategic<br>Content Planning</h3>
+                    <p>Developing comprehensive monthly content calendars and editorial plans aligned with brand identity and marketing objectives.</p>
+                    <img src="googlesheets.png" class="skill-card-logo-mobile" alt="">
+                </div>
+                
+                <div class="skill-card card-pink">
+                    <div class="tape-top"></div>
+                    <span class="skill-num-mobile">skill 02</span>
+                    <h3>Copywriting<br>& Messaging</h3>
+                    <p>Crafting compelling captions and on-screen text that drive audience engagement and call-to-action (CTA) responses.</p>
+                    <img src="googledocs.png" class="skill-card-logo-mobile" alt="">
+                </div>
+                
+                <div class="skill-card card-beige">
+                    <div class="tape-top"></div>
+                    <span class="skill-num-mobile">skill 03</span>
+                    <h3>Performance<br>Data Analysis</h3>
+                    <p>Monitoring and interpreting platform analytics (reach, engagement, watch time) to measure content effectiveness.</p>
+                    <img src="googlesheets.png" class="skill-card-logo-mobile" alt="">
+                </div>
+
+                <div class="skill-card card-peach">
+                    <div class="tape-top"></div>
+                    <span class="skill-num-mobile">skill 04</span>
+                    <h3>End-to-End<br>Content Creation</h3>
+                    <p>Managing the full production lifecycle, including scriptwriting, storyboarding, filming, and high-level video editing.</p>
+                    <img src="capcut.jpg" class="skill-card-logo-mobile" alt="">
+                    <img src="canva.png" class="skill-card-logo-mobile skill-card-logo-mobile-2" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: EXPERIENCES -->
+    <div class="section hidden" id="experienceScreen" data-index="3" data-active="1">
+
+        <!-- animated bg canvas per panel -->
+        <div class="exp-animated-bg" id="expAnimBg"></div>
+
+        <div class="exp-scene">
+
+            <!-- ═══ LEFT: sticker-style buttons ═══ -->
+            <div class="exp-left-col">
+
+                <div class="exp-heading">
+                    <span class="exp-heading-my">MY</span>
+                    <span class="exp-heading-exp">Exp.</span>
+                    <!-- squiggly underline SVG deco -->
+                    <svg class="exp-squiggle" viewBox="0 0 120 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 6 Q12 1 22 6 Q32 11 42 6 Q52 1 62 6 Q72 11 82 6 Q92 1 102 6 Q112 11 118 6" stroke="#e28a28" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    </svg>
+                </div>
+
+                <div class="exp-sticker-list">
+
+                    <!-- STICKER 01 — TikTok Food Creator -->
+                    <button class="exp-sticker exp-sticker-1 active" data-exp="1">
+                        <span class="sticker-num">01</span>
+                        <div class="sticker-text">
+                            <span class="sticker-role">TikTok Food</span>
+                            <span class="sticker-role">Content Creator</span>
+                            <span class="sticker-co">@ platedside</span>
+                        </div>
+                        <span class="sticker-star">✦</span>
+                    </button>
+
+                    <!-- STICKER 02 — S1 Branding Internship -->
+                    <button class="exp-sticker exp-sticker-2" data-exp="2">
+                        <span class="sticker-num">02</span>
+                        <div class="sticker-text">
+                            <span class="sticker-role">Internship</span>
+                            <span class="sticker-role">Content Creator</span>
+                            <span class="sticker-co">@ S1 Branding</span>
+                        </div>
+                        <span class="sticker-star">★</span>
+                    </button>
+
+                    <!-- STICKER 03 — Kmb Widyodaya -->
+                    <button class="exp-sticker exp-sticker-3" data-exp="3">
+                        <span class="sticker-num">03</span>
+                        <div class="sticker-text">
+                            <span class="sticker-role">Social Media</span>
+                            <span class="sticker-role">Officer</span>
+                            <span class="sticker-co">@ Kmb Widyodaya</span>
+                        </div>
+                        <span class="sticker-star">◆</span>
+                    </button>
+
+                    <!-- STICKER 04 — ICN 2025 -->
+                    <button class="exp-sticker exp-sticker-4" data-exp="4">
+                        <span class="sticker-num">04</span>
+                        <div class="sticker-text">
+                            <span class="sticker-role">Social Media</span>
+                            <span class="sticker-role">Team</span>
+                            <span class="sticker-co">@ ICN 2025</span>
+                        </div>
+                        <span class="sticker-star">✿</span>
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- ═══ RIGHT: panels ═══ -->
+            <div class="exp-panels-area">
+
+                <!-- ══════════════════════════════════════════
+                     PANEL 1 — Chaotic editorial / zine collage
+                     orange / cream / black
+                ══════════════════════════════════════════ -->
+                <div class="exp-panel active" id="panel-1">
+
+                    <!-- torn paper top edge -->
+                    <div class="torn-top-1"></div>
+
+                    <!-- giant background number -->
+                    <div class="p1-bg-num">01</div>
+
+                    <!-- floating doodle stars -->
+                    <svg class="p1-doodle-star s1" viewBox="0 0 40 40"><path d="M20 2 L23 15 L36 12 L26 21 L32 34 L20 26 L8 34 L14 21 L4 12 L17 15 Z" fill="#e28a28" opacity="0.35"/></svg>
+                    <svg class="p1-doodle-star s2" viewBox="0 0 40 40"><path d="M20 2 L23 15 L36 12 L26 21 L32 34 L20 26 L8 34 L14 21 L4 12 L17 15 Z" fill="#1a1a1a" opacity="0.12"/></svg>
+                    <svg class="p1-doodle-star s3" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#e28a28" stroke-width="2" stroke-dasharray="4 3" opacity="0.5"/></svg>
+
+                    <!-- tape strips -->
+                    <div class="p1-tape p1-tape-a"></div>
+                    <div class="p1-tape p1-tape-b"></div>
+
+                    <div class="p1-layout">
+                        <div class="p1-text-col">
+                            <div class="p1-eyebrow">
+                                <span class="p1-eye-text">FOOD · LIFESTYLE · TIKTOK</span>
+                            </div>
+                            <h2 class="p1-title">TikTok Food<br><em>Content</em><br>Creator</h2>
+                            <p class="p1-company">@ platedside</p>
+                            <p class="p1-desc">Conceptualized and produced high-quality visual storytelling — from short-form videos to aesthetic photography. Hit <strong>222K views</strong> & <strong>355h+ watch time</strong> on a single hero post by owning the full creative process: scripting, filming, editing.</p>
+                            <!-- hand-drawn arrow deco -->
+                            <svg class="p1-arrow-deco" viewBox="0 0 80 30" fill="none">
+                                <path d="M4 15 Q30 5 60 15 Q70 18 75 14" stroke="#e28a28" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M68 8 L75 14 L66 18" stroke="#e28a28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="p1-vids-col">
+                            <!-- polaroid 1 -->
+                            <div class="p1-polaroid p1-pol-a">
+                                <div class="p1-pol-inner">
+                                    <img src="platedside1.jpg" alt="platedside content" loading="lazy">
+                                </div>
+                                <span class="p1-pol-cap">platedside feed</span>
+                            </div>
+                            <!-- polaroid 2 -->
+                            <div class="p1-polaroid p1-pol-b">
+                                <div class="p1-pol-inner">
+                                    <video autoplay loop muted playsinline><source src="platedside2.MP4" type="video/mp4"></video>
+                                </div>
+                                <span class="p1-pol-cap">222K views ✨</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════
+                     PANEL 2 — Dark + neon risograph
+                     near-black / electric red / cream text
+                ══════════════════════════════════════════ -->
+                <div class="exp-panel hidden" id="panel-2">
+
+                    <div class="p2-grid-lines"></div>
+                    <div class="p2-neon-circle"></div>
+                    <div class="p2-neon-circle p2-nc2"></div>
+
+                    <!-- bold marquee-style heading that bleeds -->
+                    <div class="p2-marquee-wrap">
+                        <span class="p2-marquee-text">STRATEGY · GROWTH · VIRAL · STRATEGY · GROWTH · VIRAL ·&nbsp;</span>
+                    </div>
+
+                    <div class="p2-layout">
+                        <div class="p2-info">
+                            <div class="p2-num-tag">02</div>
+                            <h2 class="p2-title">Internship<br>S1 Branding</h2>
+                            <p class="p2-co">@ Prasetiya Mulya</p>
+                            <p class="p2-date-tag">CONTENT · TRENDS · ANALYTICS</p>
+                            <p class="p2-desc">Created engaging TikTok content aligned with brand identity, researched trends, and optimized strategy based on insights — driving <strong>higher engagement & growth</strong> across the program's channels.</p>
+                        </div>
+                        <div class="p2-vids">
+                            <div class="p2-vid-slot p2-vs-a">
+                                <img src="branding1.jpg" alt="S1 Branding content" loading="lazy">
+                                <div class="p2-vid-tag">REEL 01</div>
+                            </div>
+                            <div class="p2-vid-slot p2-vs-b">
+                                <video autoplay loop muted playsinline><source src="branding2.MP4" type="video/mp4"></video>
+                                <div class="p2-vid-tag">REEL 02</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════
+                     PANEL 3 — Y2K / retro vaporwave
+                     sage + lime + hot pink accents, sticker chaos
+                ══════════════════════════════════════════ -->
+                <div class="exp-panel hidden" id="panel-3">
+
+                    <div class="p3-checker-bg"></div>
+
+                    <!-- floating sticker elements -->
+                    <div class="p3-sticker-blob p3-blob-a">✦ vibes ✦</div>
+                    <div class="p3-sticker-blob p3-blob-b">🎬</div>
+                    <div class="p3-sticker-blob p3-blob-c">content</div>
+
+                    <div class="p3-layout">
+                        <div class="p3-headline-block">
+                            <div class="p3-stamp">KMB WIDYODAYA</div>
+                            <h2 class="p3-title">Social Media<br>Officer</h2>
+                            <span class="p3-years">2025</span>
+                            <p class="p3-desc">Managed Instagram & TikTok content for organizational events and community engagement — feed posts, reels, copywriting, and live event reporting. Improved engagement and tracked social performance.</p>
+                        </div>
+                        <div class="p3-filmstrip">
+                            <!-- filmstrip frame 1 -->
+                            <div class="p3-film-frame">
+                                <div class="p3-sprockets">
+                                    <div class="p3-sp"></div><div class="p3-sp"></div><div class="p3-sp"></div>
+                                </div>
+                                <div class="p3-film-vid">
+                                    <video autoplay loop muted playsinline><source src="kmb1.MP4" type="video/mp4"></video>
+                                </div>
+                                <div class="p3-sprockets">
+                                    <div class="p3-sp"></div><div class="p3-sp"></div><div class="p3-sp"></div>
+                                </div>
+                                <div class="p3-film-label">HUT ke-80 RI</div>
+                            </div>
+                            <!-- filmstrip frame 2 -->
+                            <div class="p3-film-frame">
+                                <div class="p3-sprockets">
+                                    <div class="p3-sp"></div><div class="p3-sp"></div><div class="p3-sp"></div>
+                                </div>
+                                <div class="p3-film-vid">
+                                    <video autoplay loop muted playsinline><source src="kmb2.MP4" type="video/mp4"></video>
+                                </div>
+                                <div class="p3-sprockets">
+                                    <div class="p3-sp"></div><div class="p3-sp"></div><div class="p3-sp"></div>
+                                </div>
+                                <div class="p3-film-label">live report</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════
+                     PANEL 4 — Dreamy / editorial magazine
+                     dusty lavender + gold foil + serif drama
+                ══════════════════════════════════════════ -->
+                <div class="exp-panel hidden" id="panel-4">
+
+                    <div class="p4-bg-gradient"></div>
+                    <!-- scattered circle deco -->
+                    <div class="p4-circle p4-c1"></div>
+                    <div class="p4-circle p4-c2"></div>
+                    <div class="p4-circle p4-c3"></div>
+
+                    <div class="p4-layout">
+                        <div class="p4-left">
+                            <div class="p4-issue-tag">TIKTOK · INSTAGRAM · VIRAL</div>
+                            <h2 class="p4-title">Social<br><em>Media</em></h2>
+                            <div class="p4-stat-row">
+                                <div class="p4-stat">
+                                    <span class="p4-stat-n">2</span>
+                                    <span class="p4-stat-l">Platforms<br>Managed</span>
+                                </div>
+                                <div class="p4-divider"></div>
+                                <div class="p4-stat">
+                                    <span class="p4-stat-n">∞</span>
+                                    <span class="p4-stat-l">Trend<br>Concepts</span>
+                                </div>
+                            </div>
+                            <p class="p4-desc">Created and managed engaging TikTok & Instagram content for ICN 2025 — strengthening audience interaction and organization presence through trend-aligned, viral-worthy concepts.</p>
+                            <span class="p4-date">ICN 2025</span>
+                        </div>
+                        <div class="p4-right">
+                            <div class="p4-vid-a">
+                                <video autoplay loop muted playsinline><source src="icn1.MP4" type="video/mp4"></video>
+                                <div class="p4-vid-label">ICN reel 01</div>
+                            </div>
+                            <div class="p4-vid-b">
+                                <video autoplay loop muted playsinline><source src="icn2.MP4" type="video/mp4"></video>
+                                <div class="p4-vid-label">ICN reel 02</div>
+                            </div>
+                            <!-- decorative quote -->
+                            <div class="p4-quote">"trend, film,<br>repeat"</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- end exp-panels-area -->
+        </div><!-- end exp-scene -->
+    </div>
+
+    <!-- SCREEN 5: CONTACT -->
+    <div class="section hidden" id="contactScreen" data-index="4">
+        <div class="contact-bg-text">LET'S TALK</div>
+        <div class="contact-container">
+            <div class="contact-eyebrow">
+                <span>say hi</span>
+                <svg class="contact-arrow" viewBox="0 0 60 14" fill="none" aria-hidden="true">
+                    <path d="M2 7 Q15 1 30 7 Q45 13 56 7" stroke="#c93030" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    <path d="M50 3 L56 7 L50 11" stroke="#c93030" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </div>
+            <h2 class="contact-heading">Let's create<br>something <em>together</em></h2>
+            <p class="contact-sub">Open to brand collaborations, content projects, and freelance briefs ✨</p>
+
+            <!-- Primary CTA: resume -->
+            <a href="https://canva.link/zfjfq6b8fdy1nr1" target="_blank" rel="noopener noreferrer" class="contact-resume-cta" aria-label="View resume">
+                <div class="contact-resume-tape"></div>
+                <div class="contact-resume-inner">
+                    <div class="contact-resume-text">
+                        <span class="contact-resume-label">📄 RESUME</span>
+                        <span class="contact-resume-value">Take a look at my full CV</span>
+                    </div>
+                    <span class="contact-resume-arrow">view →</span>
+                </div>
+            </a>
+
+            <div class="contact-cards">
+                <a href="mailto:vellyscaelaine@gmail.com" class="contact-card contact-card-email" aria-label="Send email">
+                    <div class="contact-card-tape"></div>
+                    <span class="contact-card-label">EMAIL</span>
+                    <span class="contact-card-value">vellyscaelaine@<wbr>gmail.com</span>
+                    <span class="contact-card-cta">drop a line →</span>
+                </a>
+                <a href="https://wa.me/62811703768" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-whatsapp" aria-label="Chat on WhatsApp">
+                    <div class="contact-card-tape"></div>
+                    <span class="contact-card-label">WHATSAPP</span>
+                    <span class="contact-card-value">+62 811 703 768</span>
+                    <span class="contact-card-cta">let's chat →</span>
+                </a>
+                <a href="https://www.tiktok.com/@platedside" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-tiktok" aria-label="Visit TikTok">
+                    <div class="contact-card-tape"></div>
+                    <span class="contact-card-label">TIKTOK</span>
+                    <span class="contact-card-value">@platedside</span>
+                    <span class="contact-card-cta">watch the work →</span>
+                </a>
+                <a href="https://www.instagram.com/vellyscaa" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-instagram" aria-label="Visit Instagram">
+                    <div class="contact-card-tape"></div>
+                    <span class="contact-card-label">INSTAGRAM</span>
+                    <span class="contact-card-value">@vellyscaa</span>
+                    <span class="contact-card-cta">say hi →</span>
+                </a>
+                <a href="https://www.linkedin.com/in/elaine-vellysca-7932a6293/" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-linkedin" aria-label="Visit LinkedIn">
+                    <div class="contact-card-tape"></div>
+                    <span class="contact-card-label">LINKEDIN</span>
+                    <span class="contact-card-value">Elaine Vellysca</span>
+                    <span class="contact-card-cta">connect →</span>
+                </a>
+            </div>
+
+            <span class="contact-signature">— made with care, by Elaine ♥</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
