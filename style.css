@@ -126,30 +126,14 @@ body, html { margin: 0; padding: 0; width: 100%; min-height: 100vh; background-c
    ═══════════════════════════════════════════════════════ */
 @media (min-width: 901px) {
     #skillsScreen, #contactScreen {
-        display: block !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
+        /* safe center = centered if fits, top-aligned if overflows,
+           so nothing is clipped off the top */
+        align-items: safe center !important;
         padding: 40px 20px !important;
         box-sizing: border-box;
     }
-    /* Inner containers use margin: auto for horizontal centering,
-       and conditional vertical centering via min-height trick */
-    #skillsScreen > .skills-container,
-    #contactScreen > .contact-container {
-        margin: auto;
-        /* Fills available space to enable centering when content is short,
-           but doesn't force extra height when content is tall */
-        min-height: calc(100vh - 80px);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    /* Background watermarks stay fixed in place even when section scrolls */
-    #skillsScreen > .skills-bg-text,
-    #contactScreen > .contact-bg-text {
-        position: fixed;
-    }
-    /* Hide scrollbars */
     #skillsScreen::-webkit-scrollbar,
     #contactScreen::-webkit-scrollbar { width: 0; display: none; }
     #skillsScreen, #contactScreen {
@@ -1394,28 +1378,6 @@ body, html { margin: 0; padding: 0; width: 100%; min-height: 100vh; background-c
    ═══════════════════════════════════════════════════════ */
 
 /* ── Short laptops (≤820px tall) ── */
-/* ── Moderately-short laptops (≤900px tall) — 1440×900, 1366×768 ── */
-@media (min-width: 901px) and (max-height: 900px) {
-    /* Contact: flip to 3-col earlier to save vertical space */
-    .contact-container { gap: 14px; }
-    .contact-heading { font-size: 3rem; line-height: 1; }
-    .contact-heading em { font-size: 1.3em; }
-    .contact-sub { font-size: .95rem; margin-bottom: 14px; }
-    .contact-resume-cta { padding: 16px 24px; margin: 4px 0 14px; }
-    .contact-cards {
-        grid-template-columns: repeat(3, 1fr);
-        max-width: 900px;
-        gap: 18px;
-    }
-    .contact-cards > .contact-card:last-child:nth-child(odd) {
-        grid-column: auto;
-        max-width: none;
-        justify-self: stretch;
-    }
-    .contact-card { padding: 22px 22px 20px; }
-    .contact-signature { margin-top: 16px; }
-}
-
 @media (min-width: 901px) and (max-height: 820px) {
     /* Skills page tightening */
     .skills-container { gap: 32px; }
@@ -1430,21 +1392,29 @@ body, html { margin: 0; padding: 0; width: 100%; min-height: 100vh; background-c
     .skill-card p { font-size: .82rem; line-height: 1.5; }
     .skills-bg-text { font-size: clamp(8rem, 18vw, 22rem); }
 
-    /* Contact: keep shrinking */
+    /* Contact page tightening: 3-col grid fits more cards in less height */
     .contact-container { gap: 12px; }
-    .contact-heading { font-size: 2.6rem; }
+    .contact-heading { font-size: 2.8rem; line-height: 1; }
     .contact-heading em { font-size: 1.25em; }
-    .contact-eyebrow { font-size: 1.25rem; }
-    .contact-sub { font-size: .88rem; margin-bottom: 10px; max-width: 460px; }
-    .contact-resume-cta { padding: 14px 20px; margin: 2px 0 10px; }
-    .contact-resume-value { font-size: 1.05rem; }
-    .contact-resume-label { font-size: .65rem; }
-    .contact-cards { gap: 14px; }
-    .contact-card { padding: 18px 20px 16px; }
-    .contact-card-value { font-size: .95rem; margin-bottom: 8px; }
-    .contact-card-cta { font-size: 1rem; }
-    .contact-card-label { font-size: .62rem; margin-bottom: 6px; }
-    .contact-signature { margin-top: 10px; font-size: 1rem; }
+    .contact-eyebrow { font-size: 1.3rem; }
+    .contact-sub { font-size: .92rem; margin-bottom: 14px; max-width: 460px; }
+    .contact-resume-cta { padding: 16px 22px; margin: 2px 0 12px; }
+    .contact-resume-value { font-size: 1.1rem; }
+    .contact-cards {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 820px;
+        gap: 16px;
+    }
+    /* 5th card no longer needs centering on 3-col grid */
+    .contact-cards > .contact-card:last-child:nth-child(odd) {
+        grid-column: auto;
+        max-width: none;
+        justify-self: stretch;
+    }
+    .contact-card { padding: 20px 20px 18px; }
+    .contact-card-value { font-size: 1rem; margin-bottom: 10px; }
+    .contact-card-cta { font-size: 1.05rem; }
+    .contact-signature { margin-top: 14px; font-size: 1.05rem; }
 }
 
 /* ── Very short laptops (≤720px tall) — even tighter ── */
@@ -1460,17 +1430,12 @@ body, html { margin: 0; padding: 0; width: 100%; min-height: 100vh; background-c
     .logo-docs, .logo-sheets { width: clamp(38px, 4vw, 50px) !important; }
 
     /* Contact */
-    .contact-eyebrow { display: none; }
-    .contact-heading { font-size: 2.2rem; margin-bottom: 4px; }
+    .contact-heading { font-size: 2.3rem; }
     .contact-sub { display: none; }
-    .contact-resume-cta { padding: 12px 18px; margin: 0 0 8px; }
-    .contact-resume-value { font-size: .98rem; }
-    .contact-resume-label { font-size: .6rem; letter-spacing: .2em; }
-    .contact-card { padding: 14px 16px 14px; }
-    .contact-card-label { font-size: .58rem; margin-bottom: 3px; letter-spacing: .18em; }
-    .contact-card-value { font-size: .88rem; margin-bottom: 6px; }
-    .contact-card-cta { font-size: .95rem; }
-    .contact-signature { margin-top: 8px; font-size: .95rem; }
+    .contact-resume-cta { padding: 14px 20px; }
+    .contact-card { padding: 18px 18px 16px; }
+    .contact-card-label { font-size: .6rem; margin-bottom: 4px; }
+    .contact-card-value { font-size: .92rem; margin-bottom: 8px; }
 }
 
 
