@@ -1,473 +1,1317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#fcf9f5">
-    <title>Elaine Vellysca · Content Creator & Branding Portfolio</title>
-    <meta name="description" content="Branding student & content creator. TikTok food creator @platedside (222K+ views), social media management, and end-to-end video production. Jakarta-based.">
-    <meta name="author" content="Elaine Vellysca">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elaine Vellysca — trend, film, repeat ✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="assets/polaroids-data.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#faecdc;
+  --cream-deep:#f4dccd;
+  --rose:#ff8aa3;
+  --coral:#ff7a6b;
+  --peach:#ffb89a;
+  --gold:#e9b974;
+  --pink:#ffc2d6;
+  --mauve:#c8a8d4;
+  --ink:#2d1f25;
+  --muted:#8a6975;
+  --line:rgba(45,31,37,.12);
+  --font-d:'Fraunces',serif;
+  --font-b:'Inter',sans-serif;
+  --font-h:'Caveat',cursive;
+}
+html,body{background:var(--cream);color:var(--ink);font-family:var(--font-b);overflow-x:hidden}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--rose);color:var(--cream)}
 
-    <!-- Open Graph (LinkedIn, WhatsApp, Discord, etc.) -->
-    <meta property="og:title" content="Elaine Vellysca · Content Creator">
-    <meta property="og:description" content="Branding student & content creator. Food, lifestyle, and social media storytelling.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="elaine.png">
+/* CANVAS */
+#three-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Elaine Vellysca · Content Creator">
-    <meta name="twitter:description" content="Branding student & content creator. Food, lifestyle, and social media storytelling.">
+/* GRAIN */
+.noise{position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.045;mix-blend-mode:multiply;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".95" numOctaves="3" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)"/></svg>')}
 
-    <!-- Favicon (inline SVG with a camera emoji) -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📸%3C/text%3E%3C/svg%3E">
+/* SOFT VIGNETTE — warm */
+.vignette{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(255,138,163,.08) 100%)}
 
-    <!-- Preload critical images so they're decoded before the intro animation runs -->
-    <link rel="preload" as="image" href="elaine.png" fetchpriority="high">
-    <link rel="preload" as="image" href="camera.png" fetchpriority="high">
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Paytone+One&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Alex+Brush&family=Bebas+Neue&family=Permanent+Marker&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+/* CONTENT LAYER */
+.content{position:relative;z-index:5}
+
+/* LOADER — 3D camera rises + flash transition */
+#loader{position:fixed;inset:0;z-index:10000;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;overflow:hidden;perspective:1200px}
+#loader .camera-wrap{position:relative;transform-style:preserve-3d;will-change:transform;display:flex;align-items:center;justify-content:center}
+#loader .cam-img{width:min(360px,62vw);max-height:60vh;display:block;filter:drop-shadow(0 50px 80px rgba(45,31,37,.3)) drop-shadow(0 12px 24px rgba(255,138,163,.2))}
+#loader .cam-caption{font-family:var(--font-h);font-size:clamp(20px,3vw,28px);color:var(--rose);opacity:0;letter-spacing:.5px}
+#loader .cam-hint{font-family:var(--font-b);font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);opacity:0;margin-top:-8px}
+.cam-flash{position:fixed;inset:0;background:#ffffff;opacity:0;pointer-events:none;z-index:10002}
+.cam-flash.tint{background:radial-gradient(ellipse at center,#ffffff 30%,#fff5e6 70%,#ffd6cc 100%)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:90;display:flex;justify-content:space-between;align-items:center;padding:24px 5vw}
+nav .logo{font-family:var(--font-d);font-style:italic;font-weight:400;font-size:20px;color:var(--ink)}
+nav .logo .heart{color:var(--rose)}
+nav .links{display:flex;gap:28px}
+nav .links a{font-family:var(--font-b);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--ink);opacity:.55;transition:opacity .3s}
+nav .links a:hover{opacity:1}
+@media(max-width:768px){nav .links{display:none}}
+
+/* HERO */
+.hero{height:100vh;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:120px 5vw 64px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(250,236,220,.55) 0%,rgba(250,236,220,.18) 38%,transparent 65%);pointer-events:none;z-index:1}
+.hero > *{position:relative;z-index:2}
+.hero-eyebrow{font-family:var(--font-h);font-size:22px;color:var(--rose);margin-bottom:18px;display:flex;align-items:center;gap:14px}
+.hero-eyebrow::before{content:"";width:48px;height:1px;background:var(--rose)}
+.hero h1{font-family:var(--font-d);font-size:clamp(56px,11vw,170px);font-weight:300;line-height:.9;letter-spacing:-.03em;color:var(--ink);max-width:13ch}
+.hero h1 .em{font-style:italic;font-weight:300;color:var(--coral)}
+.hero h1 .row{display:block;overflow:hidden}
+.hero h1 .row .inner{display:inline-block}
+.hero-sub{font-family:var(--font-d);font-style:italic;font-weight:300;font-size:clamp(20px,2.6vw,30px);color:var(--ink);margin-top:24px;max-width:560px;line-height:1.3;opacity:.85}
+.hero-sub em{color:var(--coral);font-style:italic;font-weight:400}
+.hero-meta{margin-top:40px;display:flex;justify-content:space-between;align-items:end;font-family:var(--font-b);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);flex-wrap:wrap;gap:24px}
+.hero-meta .right{text-align:right}
+.hero-meta strong{display:block;font-family:var(--font-d);font-style:italic;color:var(--ink);font-size:16px;letter-spacing:0;text-transform:none;margin-top:4px;font-weight:400}
+.hero-tag{position:absolute;top:50%;right:5vw;transform:translateY(-50%);font-family:var(--font-h);font-size:32px;color:var(--rose);text-align:right;line-height:1.1;opacity:0;z-index:3}
+.hero-tag::before{content:"✦";display:block;font-size:18px;color:var(--coral);margin-bottom:8px}
+
+/* CINEMA — pinned 3D camera flythrough */
+.cinema{position:relative}
+.scene{height:100vh;display:flex;align-items:center;padding:0 5vw;position:relative}
+.scene-inner{max-width:640px}
+.scene-num{font-family:var(--font-h);font-size:24px;color:var(--rose);margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.scene-num::before{content:"";width:48px;height:1px;background:var(--rose)}
+.scene h2{font-family:var(--font-d);font-size:clamp(44px,7vw,104px);font-weight:300;line-height:.96;letter-spacing:-.03em;margin-bottom:24px;color:var(--ink)}
+.scene h2 .em{font-style:italic;color:var(--coral)}
+.scene p{color:var(--muted);font-size:clamp(15px,1.4vw,18px);line-height:1.8;max-width:520px}
+.scene.right{justify-content:flex-end}
+.scene.right .scene-inner{text-align:right}
+.scene.right .scene-num{justify-content:flex-end}
+.scene.right .scene-num::before{display:none}
+.scene.right .scene-num::after{content:"";width:48px;height:1px;background:var(--rose);margin-left:14px}
+.scene.right p{margin-left:auto}
+.scene.center{justify-content:center;text-align:center}
+.scene.center .scene-num{justify-content:center}
+.scene.center .scene-num::after{content:"";width:48px;height:1px;background:var(--rose);margin-left:14px}
+.scene.center p{margin-left:auto;margin-right:auto}
+.scene-tools{margin-top:28px;display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.scene-tools .tool{display:flex;align-items:center;gap:10px;font-family:var(--font-b);font-size:13px;font-weight:500;letter-spacing:.5px;padding:8px 18px 8px 8px;border-radius:100px;background:rgba(253,246,236,.85);color:var(--ink);border:1px solid rgba(255,138,163,.18);box-shadow:0 8px 22px -10px rgba(255,138,163,.25);backdrop-filter:blur(6px);transition:transform .3s,box-shadow .3s}
+.scene-tools .tool:hover{transform:translateY(-2px);box-shadow:0 16px 32px -12px rgba(255,138,163,.4)}
+.scene-tools .tool img{width:28px;height:28px;border-radius:8px;object-fit:cover;background:#fff}
+.scene.right .scene-tools{justify-content:flex-end}
+
+/* SKILLS GRID OUT OF CINEMA */
+.skills{padding:140px 5vw 100px;background:linear-gradient(180deg,transparent,var(--cream-deep) 30%,var(--cream-deep) 70%,transparent);position:relative;z-index:5}
+.skills-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:64px;flex-wrap:wrap;gap:24px}
+.skills-head h2{font-family:var(--font-d);font-size:clamp(40px,7vw,96px);font-weight:300;line-height:.95;letter-spacing:-.03em;max-width:14ch}
+.skills-head h2 .em{font-style:italic;color:var(--coral)}
+.skills-head .lead{color:var(--muted);max-width:380px;font-size:14px;line-height:1.8}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:24px}
+.skill-card{padding:36px 28px;background:var(--cream);border:1px solid var(--line);border-radius:8px;position:relative;transition:transform .4s,box-shadow .4s}
+.skill-card:hover{transform:translateY(-4px);box-shadow:0 24px 60px -20px rgba(255,138,163,.3)}
+.skill-card .num{font-family:var(--font-h);font-size:24px;color:var(--rose);margin-bottom:18px}
+.skill-card h3{font-family:var(--font-d);font-size:22px;font-weight:400;letter-spacing:-.01em;margin-bottom:10px;line-height:1.2}
+.skill-card h3 .em{font-style:italic;color:var(--coral)}
+.skill-card p{color:var(--muted);font-size:14px;line-height:1.7}
+.skill-card .corner{position:absolute;top:18px;right:18px;font-family:var(--font-h);font-size:20px;color:var(--rose)}
+
+/* WORK / EXPERIENCE */
+.work{padding:140px 5vw 100px;position:relative;z-index:5;background:var(--cream)}
+.timeline{display:grid;gap:0;border-top:1px solid var(--line)}
+.timeline-item{display:grid;grid-template-columns:160px 1fr 130px 56px;gap:32px;padding:36px 0;border-bottom:1px solid var(--line);align-items:center;transition:padding-left .3s,background .3s}
+.timeline-item:hover{padding-left:16px;background:rgba(255,194,214,.08)}
+@media(max-width:900px){.timeline-item{grid-template-columns:120px 1fr 110px}.timeline-item .arrow{display:none}}
+.timeline-item .body{align-self:start}
+
+/* VIDEO THUMBNAIL (TikTok vertical 9:16) */
+.video-thumb{aspect-ratio:9/16;width:100%;max-width:120px;border-radius:10px;position:relative;overflow:hidden;cursor:pointer;transition:transform .4s,box-shadow .4s;box-shadow:0 14px 30px -12px rgba(255,138,163,.35),0 2px 8px rgba(45,31,37,.06);background:linear-gradient(135deg,var(--peach),var(--rose))}
+.video-thumb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.video-thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(45,31,37,.18),transparent 30%,transparent 65%,rgba(45,31,37,.45));pointer-events:none;z-index:1}
+.video-thumb:hover{transform:scale(1.04) translateY(-3px);box-shadow:0 22px 44px -14px rgba(255,138,163,.5),0 4px 12px rgba(45,31,37,.08)}
+.video-thumb .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--coral);display:flex;align-items:center;justify-content:center;font-size:11px;padding-left:3px;backdrop-filter:blur(4px);box-shadow:0 4px 12px rgba(45,31,37,.25);z-index:3;opacity:0;transition:opacity .3s}
+.video-thumb:hover .play{opacity:1}
+.video-thumb .dur{position:absolute;bottom:8px;right:8px;font-family:var(--font-b);font-size:10px;letter-spacing:.5px;background:rgba(45,31,37,.7);color:#fff;padding:3px 8px;border-radius:100px;z-index:3;backdrop-filter:blur(4px)}
+.video-thumb .tag{position:absolute;top:8px;left:8px;font-family:var(--font-h);font-size:14px;color:#fff;text-shadow:0 1px 6px rgba(45,31,37,.6);z-index:3}
+.timeline-item .year{font-family:var(--font-h);font-size:22px;color:var(--rose)}
+.timeline-item h3{font-family:var(--font-d);font-size:26px;font-weight:400;letter-spacing:-.01em}
+.timeline-item h3 .em{font-style:italic;color:var(--coral)}
+.timeline-item .company{color:var(--muted);font-size:13px;margin-top:6px;letter-spacing:1px;text-transform:uppercase}
+.timeline-item p{color:var(--muted);font-size:14px;line-height:1.7;margin-top:12px;max-width:60ch}
+.timeline-item .focus{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.timeline-item .focus span{font-size:11px;letter-spacing:1px;padding:5px 12px;border-radius:100px;background:rgba(255,138,163,.1);color:var(--ink)}
+.timeline-item .arrow{font-family:var(--font-d);text-align:right;color:var(--muted);font-size:24px;transition:color .3s,transform .3s}
+.timeline-item:hover .arrow{color:var(--rose);transform:translateX(8px)}
+
+/* HIGHLIGHT NUMBERS */
+.numbers{padding:120px 5vw;background:var(--cream-deep);position:relative;z-index:5;text-align:center;overflow:hidden}
+.numbers .doodle{position:absolute;font-family:var(--font-h);color:var(--rose);opacity:.5;pointer-events:none}
+.numbers .d1{top:30px;left:8%;font-size:28px;transform:rotate(-12deg)}
+.numbers .d2{bottom:30px;right:10%;font-size:24px;transform:rotate(8deg)}
+.numbers .d3{top:50px;right:15%;font-size:32px}
+.numbers .badge{font-family:var(--font-h);font-size:24px;color:var(--coral);margin-bottom:16px}
+.numbers h3{font-family:var(--font-d);font-size:clamp(36px,5vw,68px);font-weight:300;max-width:900px;margin:0 auto;line-height:1.1;letter-spacing:-.02em}
+.numbers h3 .em{font-style:italic;color:var(--coral)}
+.numbers .stats{display:flex;justify-content:center;gap:64px;margin-top:48px;flex-wrap:wrap}
+.numbers .stat .big{font-family:var(--font-d);font-size:clamp(56px,8vw,100px);font-weight:300;line-height:1;color:var(--ink);font-style:italic}
+.numbers .stat .label{font-family:var(--font-b);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+
+/* GALLERY (polaroid placeholders) */
+.gallery{padding:140px 5vw 100px;background:var(--cream);position:relative;z-index:5;overflow:hidden}
+.gallery-head{text-align:center;margin-bottom:64px}
+.gallery-head .eyebrow{font-family:var(--font-h);font-size:24px;color:var(--coral);margin-bottom:8px;display:block}
+.gallery-head h2{font-family:var(--font-d);font-size:clamp(40px,7vw,96px);font-weight:300;line-height:.95;letter-spacing:-.03em;max-width:14ch;margin:0 auto}
+.gallery-head h2 .em{font-style:italic;color:var(--coral)}
+.gallery-head p{color:var(--muted);max-width:480px;margin:20px auto 0;font-size:15px;line-height:1.8}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:32px;justify-items:center;max-width:1200px;margin:0 auto}
+.polaroid{background:#fdf6ec;padding:14px 14px 48px;border:1px solid rgba(45,31,37,.06);box-shadow:0 18px 40px -16px rgba(45,31,37,.18),0 2px 8px rgba(45,31,37,.05);transform:rotate(var(--r,0deg));transition:transform .5s ease,box-shadow .5s ease;position:relative;width:100%;max-width:240px}
+.polaroid:hover{transform:rotate(0deg) translateY(-8px) scale(1.02);box-shadow:0 30px 60px -18px rgba(255,138,163,.35),0 4px 12px rgba(45,31,37,.08)}
+.polaroid .photo{aspect-ratio:1/1;background:#f4dccd;position:relative;overflow:hidden}
+.polaroid .photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.polaroid:hover .photo img{transform:scale(1.04)}
+.polaroid .photo::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.18),transparent 50%);pointer-events:none}
+.polaroid .caption{font-family:var(--font-h);font-size:18px;color:var(--ink);text-align:center;position:absolute;bottom:14px;left:0;right:0}
+
+/* CONTACT */
+.contact{padding:160px 5vw 80px;background:linear-gradient(180deg,var(--cream),var(--cream-deep));position:relative;z-index:5;overflow:hidden}
+.contact-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:end;max-width:1300px;margin:0 auto}
+@media(max-width:900px){.contact-grid{grid-template-columns:1fr;gap:48px}}
+.contact h2{font-family:var(--font-d);font-size:clamp(56px,11vw,180px);font-weight:300;line-height:.86;letter-spacing:-.04em}
+.contact h2 .em{font-style:italic;color:var(--coral)}
+.contact .sig{font-family:var(--font-h);font-size:32px;color:var(--rose);margin-top:16px}
+.contact p{color:var(--muted);font-size:16px;line-height:1.8;margin-top:24px;max-width:480px}
+.contact-links{display:grid;gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.contact-link{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line);transition:padding-left .3s}
+.contact-link:last-child{border-bottom:none}
+.contact-link:hover{padding-left:14px}
+.contact-link .label{font-family:var(--font-h);font-size:18px;color:var(--rose)}
+.contact-link .value{font-family:var(--font-d);font-size:17px;font-weight:400;letter-spacing:-.01em}
+.contact-link .arrow{color:var(--muted);transition:color .3s,transform .3s;font-family:var(--font-d);font-size:22px}
+.contact-link:hover .arrow{color:var(--coral);transform:translateX(8px)}
+
+/* FOOTER */
+footer{padding:40px 5vw 50px;background:var(--cream-deep);position:relative;z-index:5;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);letter-spacing:1px}
+footer .made{font-family:var(--font-h);font-size:20px;color:var(--rose);letter-spacing:0}
+footer .made .heart{display:inline-block;transform:translateY(-1px)}
+
+/* CURSOR */
+.cursor{position:fixed;width:14px;height:14px;border:1px solid var(--rose);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s}
+.cursor.active{width:48px;height:48px;background:rgba(255,138,163,.1)}
+.cursor-dot{position:fixed;width:4px;height:4px;background:var(--rose);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+
+/* HUD */
+.hud{position:fixed;bottom:24px;left:5vw;z-index:50;font-family:var(--font-h);font-size:18px;color:var(--rose);display:flex;align-items:center;gap:10px}
+.hud .dot{width:6px;height:6px;background:var(--coral);border-radius:50%;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+.hud-progress{position:fixed;bottom:24px;right:5vw;z-index:50;font-family:var(--font-b);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+
+/* FLOATING DECORATIVE STARS */
+.deco-star{position:fixed;font-family:var(--font-h);color:var(--rose);pointer-events:none;z-index:3;opacity:0}
+
+/* ========================================================== */
+/* MOBILE — clamp typography, stack rows, tighten spacing       */
+/* ========================================================== */
+@media (max-width: 900px){
+  nav{padding:18px 5vw}
+  nav .logo{font-size:18px}
+  .hero{padding:96px 5vw 56px}
+  .hero h1{max-width:100%;line-height:.92}
+  .hero-tag{position:static;transform:none;text-align:left;margin-top:18px;font-size:24px;line-height:1.15;display:inline-block}
+  .hero-tag::before{display:inline-block;margin-right:6px;margin-bottom:0}
+  .hero-meta{flex-direction:column;align-items:flex-start;gap:14px}
+  .hero-meta .right{text-align:left}
+
+  .scene{padding:0 6vw}
+  .scene h2{font-size:clamp(34px,8vw,52px)}
+  .scene.right{justify-content:flex-start}
+  .scene.right .scene-inner{text-align:left}
+  .scene.right .scene-num{justify-content:flex-start}
+  .scene.right .scene-num::before{content:"";display:inline-block;width:48px;height:1px;background:var(--rose)}
+  .scene.right .scene-num::after{display:none}
+  .scene.right p{margin-left:0}
+  .scene.right .scene-tools{justify-content:flex-start}
+  .scene.center{justify-content:flex-start;text-align:left}
+  .scene.center .scene-num{justify-content:flex-start}
+  .scene.center .scene-num::after{display:none}
+  .scene.center p{margin-left:0;margin-right:auto}
+  .scene-tools{justify-content:flex-start}
+
+  .skills,.work,.projects,.gallery,.numbers,.contact{padding-left:6vw;padding-right:6vw}
+  .skills{padding-top:90px;padding-bottom:60px}
+  .work{padding-top:90px;padding-bottom:60px}
+  .gallery{padding-top:90px;padding-bottom:60px}
+  .contact{padding-top:90px;padding-bottom:48px}
+  .skills-head{flex-direction:column;align-items:flex-start;margin-bottom:36px;gap:14px}
+  .skills-head h2{font-size:clamp(34px,8vw,56px)}
+
+  .timeline-item{padding:24px 0}
+  .timeline-item h3{font-size:21px}
+
+  .numbers{padding:80px 5vw}
+  .numbers .stats{gap:28px;margin-top:32px}
+  .numbers .stat .big{font-size:clamp(46px,12vw,72px)}
+  .numbers .doodle{display:none}
+
+  .gallery-head{margin-bottom:40px}
+  .gallery-head h2{font-size:clamp(34px,9vw,56px)}
+  .gallery-grid{gap:24px}
+  .polaroid{max-width:240px}
+
+  .contact-grid{gap:32px}
+  .contact h2{font-size:clamp(48px,13vw,84px)}
+  .contact .sig{font-size:26px;margin-top:10px}
+  .contact-link{padding:18px 0}
+  .contact-link .value{font-size:15px}
+
+  footer{flex-direction:column;align-items:flex-start;gap:6px;padding:24px 5vw 32px}
+  footer .made{font-size:18px}
+
+  .hud{font-size:14px;bottom:14px;left:5vw}
+  .hud-progress{font-size:10px;bottom:14px;right:5vw}
+  .deco-star{display:none}
+}
+
+@media (max-width: 600px){
+  .hero h1{font-size:clamp(54px,13vw,90px)}
+  .hero-eyebrow{font-size:18px}
+  .hero-sub{font-size:18px}
+  .scene h2{font-size:clamp(30px,8vw,42px)}
+  .scene-num{font-size:18px}
+
+  /* CRAFT (skills) — editorial row: big number LEFT, title + desc RIGHT */
+  .skills-grid{gap:12px}
+  .skill-card{
+    display:grid;
+    grid-template-columns:64px 1fr;
+    grid-template-areas:"num title" "num desc";
+    column-gap:14px;
+    row-gap:4px;
+    padding:22px 22px 22px 18px;
+    border-radius:14px;
+    align-items:start;
+  }
+  .skill-card .num{
+    grid-area:num;
+    font-size:44px;
+    margin-bottom:0;
+    line-height:.9;
+    align-self:start;
+    padding-top:2px;
+  }
+  .skill-card h3{
+    grid-area:title;
+    font-size:17.5px;
+    margin-bottom:0;
+    line-height:1.25;
+    padding-right:28px;
+  }
+  .skill-card p{
+    grid-area:desc;
+    font-size:13.5px;
+    line-height:1.6;
+    margin-top:2px;
+  }
+  .skill-card .corner{top:14px;right:14px;font-size:16px}
+  .skill-card:hover{transform:none;box-shadow:none}
+
+  /* Timeline 2-col LinkedIn-style: video LEFT, year+body RIGHT */
+  .timeline-item{
+    grid-template-columns:108px 1fr;
+    grid-template-areas:"video year" "video body";
+    gap:8px 16px;
+    align-items:start;
+    padding:26px 0;
+  }
+  .timeline-item .year{grid-area:year;font-size:17px;padding-top:2px;line-height:1}
+  .timeline-item .body{grid-area:body}
+  .timeline-item .video-thumb{grid-area:video;max-width:108px;align-self:start}
+  .timeline-item h3{font-size:19px;line-height:1.2}
+  .timeline-item .company{font-size:11px;margin-top:4px}
+  .timeline-item p{font-size:13px;margin-top:8px;line-height:1.6}
+  .timeline-item .focus{margin-top:10px;gap:6px}
+  .timeline-item .focus span{font-size:10px;padding:4px 10px}
+
+  /* GALLERY → horizontal snap-scroll carousel (Insta-feed vibe) */
+  .gallery{padding-bottom:80px}
+  .gallery-head .eyebrow::after{content:" · swipe →";color:var(--rose);opacity:.7;font-size:.8em}
+  .gallery-grid{
+    display:flex;
+    grid-template-columns:none;
+    overflow-x:auto;
+    overflow-y:visible;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    gap:18px;
+    padding:18px 6vw 32px;
+    margin:0 -6vw;
+    scroll-padding-left:6vw;
+    scrollbar-width:none;
+  }
+  .gallery-grid::-webkit-scrollbar{display:none}
+  .polaroid{
+    flex:0 0 64%;
+    max-width:240px;
+    scroll-snap-align:center;
+    padding:12px 12px 38px;
+  }
+  .polaroid .caption{font-size:14px;bottom:12px}
+
+  /* CONTACT — stack labels vertically + position arrow absolute */
+  .contact h2{font-size:clamp(44px,14vw,72px);line-height:.92}
+  .contact h2 br{display:none}
+  .contact .sig{font-size:24px;margin-top:12px}
+  .contact p{font-size:15px;margin-top:18px}
+  .contact-link{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:4px;
+    padding:18px 32px 18px 0;
+    position:relative;
+  }
+  .contact-link > div{width:100%}
+  .contact-link .label{font-size:15px}
+  .contact-link .value{font-size:14px;word-break:break-word;line-height:1.35}
+  .contact-link .arrow{
+    position:absolute;
+    right:4px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:20px;
+  }
+  .contact-link:hover{padding-left:6px}
+  .contact-link:hover .arrow{transform:translateY(-50%) translateX(4px)}
+
+  .numbers h3{font-size:clamp(24px,5.5vw,36px)}
+  .numbers .badge{font-size:18px}
+  .cursor,.cursor-dot{display:none!important}
+}
+
+@media (max-width: 420px){
+  .timeline-item{grid-template-columns:88px 1fr;gap:6px 14px}
+  .timeline-item .video-thumb{max-width:88px}
+  .timeline-item .year{font-size:15px}
+  .timeline-item h3{font-size:17.5px}
+  .polaroid{flex-basis:72%}
+}
+
+@media (max-width: 380px){
+  .timeline-item{grid-template-columns:80px 1fr;gap:6px 12px}
+  .timeline-item .video-thumb{max-width:80px}
+  .timeline-item p{font-size:12.5px}
+  .polaroid{flex-basis:78%;max-width:220px}
+  .skill-card{grid-template-columns:52px 1fr;column-gap:12px;padding:20px 18px 20px 16px}
+  .skill-card .num{font-size:36px}
+  .skill-card h3{font-size:16.5px}
+  .skill-card p{font-size:13px}
+}
+</style>
 </head>
 <body>
 
-    <div class="flash-overlay"></div>
+<div class="noise"></div>
+<div class="vignette"></div>
+<div class="cursor"></div>
+<div class="cursor-dot"></div>
 
-    <nav class="dot-nav hidden" id="dotNav" aria-label="Section navigation">
-        <button class="dot active" data-index="0" aria-label="Intro" data-label="intro"></button>
-        <button class="dot" data-index="1" aria-label="About" data-label="about"></button>
-        <button class="dot" data-index="2" aria-label="Skills" data-label="skills"></button>
-        <button class="dot" data-index="3" aria-label="Experiences" data-label="experience"></button>
-        <button class="dot" data-index="4" aria-label="Contact" data-label="contact"></button>
-    </nav>
+<!-- LOADER — 3D camera rises from below + flash -->
+<div id="loader">
+  <div class="camera-wrap">
+    <img class="cam-img" src="assets/camera.png" alt="">
+  </div>
+  <div class="cam-caption">say cheese ✨</div>
+  <div class="cam-hint">3 · 2 · 1 · click</div>
+</div>
+<div class="cam-flash tint"></div>
 
-    <div class="camera-container" id="cameraScreen">
-        <img src="camera.png" alt="Instax Camera" class="camera-img" loading="eager" decoding="sync" fetchpriority="high">
+<!-- 3D CANVAS -->
+<canvas id="three-canvas"></canvas>
+
+<!-- DECO floating stars (DOM, light overlay) -->
+<span class="deco-star" style="top:18%;left:6%;font-size:30px">✦</span>
+<span class="deco-star" style="top:75%;left:88%;font-size:24px">✿</span>
+<span class="deco-star" style="top:42%;left:92%;font-size:22px">★</span>
+<span class="deco-star" style="top:88%;left:12%;font-size:28px">✦</span>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">elaine <span class="heart">♥</span></div>
+  <div class="links">
+    <a href="#cinema">about</a>
+    <a href="#skills">craft</a>
+    <a href="#work">work</a>
+    <a href="#gallery">moments</a>
+    <a href="#contact">say hi</a>
+  </div>
+</nav>
+
+<!-- HUD -->
+<div class="hud"><span class="dot"></span> scroll, please ✦</div>
+<div class="hud-progress" id="hud-progress">00 / 06</div>
+
+<main class="content">
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-tag">trend,<br>film,<br><em>repeat</em>.</div>
+    <div class="hero-eyebrow">hi, it's me ✨</div>
+    <h1>
+      <span class="row"><span class="inner">Elaine</span></span>
+      <span class="row"><span class="inner"><span class="em">Vellysca</span>.</span></span>
+    </h1>
+    <div class="hero-sub">— making moments people <em>actually rewatch</em>.</div>
+    <div class="hero-meta">
+      <div>
+        <span>Portfolio · 2026</span>
+        <strong>Content Creator & Branding Student</strong>
+      </div>
+      <div class="right">
+        <span>based in</span>
+        <strong>Jakarta, Indonesia</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- CINEMA: pinned camera flythrough with stacked text scenes -->
+  <section class="cinema" id="cinema">
+
+    <div class="scene" data-scene="1">
+      <div class="scene-inner">
+        <div class="scene-num">01 ✦ hello</div>
+        <h2>I tell stories with a <span class="em">camera</span> & a clock.</h2>
+        <p>Content creator working across food, lifestyle, and brand identity. I plan, shoot, edit, and analyze — taking a concept from a half-finished script to something people actually rewatch.</p>
+      </div>
     </div>
 
-    <!-- SCREEN 1: INTRO -->
-    <div class="section hidden" id="introScreen" data-index="0">
-        <div class="big-name"><span>ELAINE</span><span>VELLYSCA</span></div>
-        <span class="intro-tagline">content creator <span class="tagline-dot">·</span> branding student <span class="tagline-dot">·</span> jakarta</span>
-        <div class="note note-1" data-text="Hi. Since you're new here."></div>
-        <div class="note note-2" data-text="let me be ya tour guide"></div>
-        <div class="note note-3" data-text="This is Elaine"></div>
-        <img src="elaine.png" alt="Elaine Vellysca" class="portrait-img" loading="eager" decoding="sync" fetchpriority="high">
-        <div class="scroll-cta" id="scrollCta">
-            <span class="scroll-label">scroll to explore</span>
-            <div class="scroll-arrow">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v14M4 11l6 6 6-6" stroke="#CDBBA7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
+    <div class="scene right" data-scene="2">
+      <div class="scene-inner">
+        <div class="scene-num">02 ✦ craft</div>
+        <h2>Strategy first, then the <span class="em">vibe</span>.</h2>
+        <p>Monthly content calendars. Captions that earn the swipe. Watch-time data that decides what we shoot next. The cute part of content only works when the boring part is done well.</p>
+      </div>
+    </div>
+
+    <div class="scene center" data-scene="3">
+      <div class="scene-inner">
+        <div class="scene-num">03 ✦ tools</div>
+        <h2>A small kit, used <span class="em">well</span>.</h2>
+        <p>Most of the magic happens in four tabs and one phone — the rest is taste, timing, and showing up consistently.</p>
+        <div class="scene-tools">
+          <span class="tool"><img src="assets/canva.png" alt="Canva"> Canva</span>
+          <span class="tool"><img src="assets/capcut.jpg" alt="CapCut"> CapCut</span>
+          <span class="tool"><img src="assets/googledocs.png" alt="Google Docs"> Google Docs</span>
+          <span class="tool"><img src="assets/googlesheets.png" alt="Google Sheets"> Google Sheets</span>
         </div>
+      </div>
     </div>
 
-    <!-- SCREEN 2: ABOUT -->
-    <div class="section hidden" id="aboutScreen" data-index="1">
-        <div class="about-container">
-            <div class="about-inner">
-                <!-- Mobile-only: polaroid intro card -->
-                <div class="about-polaroid-mobile">
-                    <div class="about-polaroid-frame">
-                        <div class="about-polaroid-photo">
-                            <img src="elaine.png" alt="Elaine Vellysca" loading="eager" decoding="sync">
-                        </div>
-                        <span class="about-polaroid-cap">hi, it's me ✨</span>
-                    </div>
-                </div>
-                <div class="notebook-wrapper float-el">
-                    <img src="book.png" alt="Blank Notebook" class="notebook-asset">
-                    <div class="notebook-text-overlay">
-                        <h3 class="notebook-title bio-line" data-text="Hi, I'm Elaine Vellysca"></h3>
-                        <p class="notebook-p bio-line" data-text="Branding student at Prasetiya Mulya University with a passion for social media and content creation. I enjoy transforming ideas into visually appealing and engaging content, especially in the food and lifestyle space."></p>
-                        <p class="notebook-p bio-line" data-text="I'm driven to create content that not only looks aesthetic but also connects with audiences and transform creative concepts into professional digital assets that drive brand resonance."></p>
-                        <span class="about-signature-mobile">— Elaine</span>
-                    </div>
-                </div>
-                <div class="film-strip-wrapper float-el-fast">
-                    <img src="photo.png" alt="Film Strip" class="film-strip-asset">
-                </div>
-                <div class="about-title float-el-slow">
-                    <span class="about-small">ABOUT</span>
-                    <span class="about-large">Me</span>
-                </div>
-            </div>
+    <div class="scene" data-scene="4">
+      <div class="scene-inner">
+        <div class="scene-num">04 ✦ now</div>
+        <h2>Open to <span class="em">collaborate</span>.</h2>
+        <p>Brand collaborations, content projects, freelance briefs — if it's a story worth telling and a vibe worth shaping, let's talk. ✨</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- SKILLS -->
+  <section class="skills" id="skills">
+    <div class="skills-head">
+      <h2>What I do, <span class="em">in detail</span>.</h2>
+      <p class="lead">Four core capabilities I bring to every brief — from monthly planning to the final post-production polish.</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="num">01</div>
+        <span class="corner">✦</span>
+        <h3>Strategic <span class="em">Content Planning</span></h3>
+        <p>Developing comprehensive monthly content calendars and editorial plans aligned with brand identity and marketing objectives.</p>
+      </div>
+      <div class="skill-card">
+        <div class="num">02</div>
+        <span class="corner">✿</span>
+        <h3>Copywriting & <span class="em">Messaging</span></h3>
+        <p>Crafting compelling captions and on-screen text that drive audience engagement and call-to-action responses.</p>
+      </div>
+      <div class="skill-card">
+        <div class="num">03</div>
+        <span class="corner">★</span>
+        <h3>Performance <span class="em">Data Analysis</span></h3>
+        <p>Monitoring and interpreting platform analytics — reach, engagement, watch time — to measure content effectiveness.</p>
+      </div>
+      <div class="skill-card">
+        <div class="num">04</div>
+        <span class="corner">✦</span>
+        <h3>End-to-End <span class="em">Content Creation</span></h3>
+        <p>Managing the full production lifecycle — scriptwriting, storyboarding, filming, and high-level video editing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="work" id="work">
+    <div class="skills-head">
+      <h2>Where I've been <span class="em">filming</span>.</h2>
+      <p class="lead">Four roles across food content, university branding, and student community media — every one shipped real, public posts.</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="year">2024 — present</div>
+        <div class="body">
+          <h3>TikTok Food <span class="em">Content Creator</span></h3>
+          <div class="company">Platedside</div>
+          <p>Conceptualized and produced high-quality visual storytelling — short-form videos to aesthetic photography. Achieved 222K views and 355+ hours of watch time on hero post through full creative ownership: scripting, filming, editing.</p>
+          <div class="focus"><span>Food</span><span>Lifestyle</span><span>TikTok</span></div>
         </div>
-    </div>
-    <div class="section hidden" id="skillsScreen" data-index="2">
-        <div class="skills-bg-text">TOOLKIT</div>
-        
-        <div class="skills-container">
-            <div class="skills-header">
-                <h2 class="skills-heading">My <em>Skills</em></h2>
-                <p class="skills-sub">The creative arsenal</p>
-            </div>
-            
-            <div class="skills-grid">
-                <img src="canva.png" class="skill-logo logo-canva" alt="Canva">
-                <img src="capcut.jpg" class="skill-logo logo-capcut" alt="CapCut">
-                <img src="googledocs.png" class="skill-logo logo-docs" alt="Google Docs">
-                <img src="googlesheets.png" class="skill-logo logo-sheets" alt="Google Sheets">
-
-                <div class="skill-card card-taupe">
-                    <div class="tape-top"></div>
-                    <span class="skill-num-mobile">skill 01</span>
-                    <h3>Strategic<br>Content Planning</h3>
-                    <p>Developing comprehensive monthly content calendars and editorial plans aligned with brand identity and marketing objectives.</p>
-                    <img src="googlesheets.png" class="skill-card-logo-mobile" alt="">
-                </div>
-                
-                <div class="skill-card card-pink">
-                    <div class="tape-top"></div>
-                    <span class="skill-num-mobile">skill 02</span>
-                    <h3>Copywriting<br>& Messaging</h3>
-                    <p>Crafting compelling captions and on-screen text that drive audience engagement and call-to-action (CTA) responses.</p>
-                    <img src="googledocs.png" class="skill-card-logo-mobile" alt="">
-                </div>
-                
-                <div class="skill-card card-beige">
-                    <div class="tape-top"></div>
-                    <span class="skill-num-mobile">skill 03</span>
-                    <h3>Performance<br>Data Analysis</h3>
-                    <p>Monitoring and interpreting platform analytics (reach, engagement, watch time) to measure content effectiveness.</p>
-                    <img src="googlesheets.png" class="skill-card-logo-mobile" alt="">
-                </div>
-
-                <div class="skill-card card-peach">
-                    <div class="tape-top"></div>
-                    <span class="skill-num-mobile">skill 04</span>
-                    <h3>End-to-End<br>Content Creation</h3>
-                    <p>Managing the full production lifecycle, including scriptwriting, storyboarding, filming, and high-level video editing.</p>
-                    <img src="capcut.jpg" class="skill-card-logo-mobile" alt="">
-                    <img src="canva.png" class="skill-card-logo-mobile skill-card-logo-mobile-2" alt="">
-                </div>
-            </div>
+        <div class="video-thumb">
+          <video src="assets/platedside2.MP4" autoplay muted loop playsinline preload="metadata"></video>
+          <span class="tag">hero post ✦</span>
+          <span class="play">▶</span>
+          <span class="dur">222K views</span>
         </div>
-    </div>
-
-    <!-- SCREEN 3: EXPERIENCES -->
-    <div class="section hidden" id="experienceScreen" data-index="3" data-active="1">
-
-        <!-- animated bg canvas per panel -->
-        <div class="exp-animated-bg" id="expAnimBg"></div>
-
-        <div class="exp-scene">
-
-            <!-- ═══ LEFT: sticker-style buttons ═══ -->
-            <div class="exp-left-col">
-
-                <div class="exp-heading">
-                    <span class="exp-heading-my">MY</span>
-                    <span class="exp-heading-exp">Exp.</span>
-                    <!-- squiggly underline SVG deco -->
-                    <svg class="exp-squiggle" viewBox="0 0 120 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2 6 Q12 1 22 6 Q32 11 42 6 Q52 1 62 6 Q72 11 82 6 Q92 1 102 6 Q112 11 118 6" stroke="#e28a28" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-                    </svg>
-                </div>
-
-                <div class="exp-sticker-list">
-
-                    <!-- STICKER 01 — TikTok Food Creator -->
-                    <button class="exp-sticker exp-sticker-1 active" data-exp="1">
-                        <span class="sticker-num">01</span>
-                        <div class="sticker-text">
-                            <span class="sticker-role">TikTok Food</span>
-                            <span class="sticker-role">Content Creator</span>
-                            <span class="sticker-co">@ platedside</span>
-                        </div>
-                        <span class="sticker-star">✦</span>
-                    </button>
-
-                    <!-- STICKER 02 — S1 Branding Internship -->
-                    <button class="exp-sticker exp-sticker-2" data-exp="2">
-                        <span class="sticker-num">02</span>
-                        <div class="sticker-text">
-                            <span class="sticker-role">Internship</span>
-                            <span class="sticker-role">Content Creator</span>
-                            <span class="sticker-co">@ S1 Branding</span>
-                        </div>
-                        <span class="sticker-star">★</span>
-                    </button>
-
-                    <!-- STICKER 03 — Kmb Widyodaya -->
-                    <button class="exp-sticker exp-sticker-3" data-exp="3">
-                        <span class="sticker-num">03</span>
-                        <div class="sticker-text">
-                            <span class="sticker-role">Social Media</span>
-                            <span class="sticker-role">Officer</span>
-                            <span class="sticker-co">@ Kmb Widyodaya</span>
-                        </div>
-                        <span class="sticker-star">◆</span>
-                    </button>
-
-                    <!-- STICKER 04 — ICN 2025 -->
-                    <button class="exp-sticker exp-sticker-4" data-exp="4">
-                        <span class="sticker-num">04</span>
-                        <div class="sticker-text">
-                            <span class="sticker-role">Social Media</span>
-                            <span class="sticker-role">Team</span>
-                            <span class="sticker-co">@ ICN 2025</span>
-                        </div>
-                        <span class="sticker-star">✿</span>
-                    </button>
-
-                </div>
-            </div>
-
-            <!-- ═══ RIGHT: panels ═══ -->
-            <div class="exp-panels-area">
-
-                <!-- ══════════════════════════════════════════
-                     PANEL 1 — Chaotic editorial / zine collage
-                     orange / cream / black
-                ══════════════════════════════════════════ -->
-                <div class="exp-panel active" id="panel-1">
-
-                    <!-- torn paper top edge -->
-                    <div class="torn-top-1"></div>
-
-                    <!-- giant background number -->
-                    <div class="p1-bg-num">01</div>
-
-                    <!-- floating doodle stars -->
-                    <svg class="p1-doodle-star s1" viewBox="0 0 40 40"><path d="M20 2 L23 15 L36 12 L26 21 L32 34 L20 26 L8 34 L14 21 L4 12 L17 15 Z" fill="#e28a28" opacity="0.35"/></svg>
-                    <svg class="p1-doodle-star s2" viewBox="0 0 40 40"><path d="M20 2 L23 15 L36 12 L26 21 L32 34 L20 26 L8 34 L14 21 L4 12 L17 15 Z" fill="#1a1a1a" opacity="0.12"/></svg>
-                    <svg class="p1-doodle-star s3" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#e28a28" stroke-width="2" stroke-dasharray="4 3" opacity="0.5"/></svg>
-
-                    <!-- tape strips -->
-                    <div class="p1-tape p1-tape-a"></div>
-                    <div class="p1-tape p1-tape-b"></div>
-
-                    <div class="p1-layout">
-                        <div class="p1-text-col">
-                            <div class="p1-eyebrow">
-                                <span class="p1-eye-text">FOOD · LIFESTYLE · TIKTOK</span>
-                            </div>
-                            <h2 class="p1-title">TikTok Food<br><em>Content</em><br>Creator</h2>
-                            <p class="p1-company">@ platedside</p>
-                            <p class="p1-desc">Conceptualized and produced high-quality visual storytelling — from short-form videos to aesthetic photography. Hit <strong>222K views</strong> & <strong>355h+ watch time</strong> on a single hero post by owning the full creative process: scripting, filming, editing.</p>
-                            <!-- hand-drawn arrow deco -->
-                            <svg class="p1-arrow-deco" viewBox="0 0 80 30" fill="none">
-                                <path d="M4 15 Q30 5 60 15 Q70 18 75 14" stroke="#e28a28" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M68 8 L75 14 L66 18" stroke="#e28a28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
-                        <div class="p1-vids-col">
-                            <!-- polaroid 1 -->
-                            <div class="p1-polaroid p1-pol-a">
-                                <div class="p1-pol-inner">
-                                    <img src="platedside1.jpg" alt="platedside content" loading="lazy">
-                                </div>
-                                <span class="p1-pol-cap">platedside feed</span>
-                            </div>
-                            <!-- polaroid 2 -->
-                            <div class="p1-polaroid p1-pol-b">
-                                <div class="p1-pol-inner">
-                                    <video autoplay loop muted playsinline><source src="platedside2.MP4" type="video/mp4"></video>
-                                </div>
-                                <span class="p1-pol-cap">222K views ✨</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ══════════════════════════════════════════
-                     PANEL 2 — Dark + neon risograph
-                     near-black / electric red / cream text
-                ══════════════════════════════════════════ -->
-                <div class="exp-panel hidden" id="panel-2">
-
-                    <div class="p2-grid-lines"></div>
-                    <div class="p2-neon-circle"></div>
-                    <div class="p2-neon-circle p2-nc2"></div>
-
-                    <!-- bold marquee-style heading that bleeds -->
-                    <div class="p2-marquee-wrap">
-                        <span class="p2-marquee-text">STRATEGY · GROWTH · VIRAL · STRATEGY · GROWTH · VIRAL ·&nbsp;</span>
-                    </div>
-
-                    <div class="p2-layout">
-                        <div class="p2-info">
-                            <div class="p2-num-tag">02</div>
-                            <h2 class="p2-title">Internship<br>S1 Branding</h2>
-                            <p class="p2-co">@ Prasetiya Mulya</p>
-                            <p class="p2-date-tag">CONTENT · TRENDS · ANALYTICS</p>
-                            <p class="p2-desc">Created engaging TikTok content aligned with brand identity, researched trends, and optimized strategy based on insights — driving <strong>higher engagement & growth</strong> across the program's channels.</p>
-                        </div>
-                        <div class="p2-vids">
-                            <div class="p2-vid-slot p2-vs-a">
-                                <img src="branding1.jpg" alt="S1 Branding content" loading="lazy">
-                                <div class="p2-vid-tag">REEL 01</div>
-                            </div>
-                            <div class="p2-vid-slot p2-vs-b">
-                                <video autoplay loop muted playsinline><source src="branding2.MP4" type="video/mp4"></video>
-                                <div class="p2-vid-tag">REEL 02</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ══════════════════════════════════════════
-                     PANEL 3 — Y2K / retro vaporwave
-                     sage + lime + hot pink accents, sticker chaos
-                ══════════════════════════════════════════ -->
-                <div class="exp-panel hidden" id="panel-3">
-
-                    <div class="p3-checker-bg"></div>
-
-                    <!-- floating sticker elements -->
-                    <div class="p3-sticker-blob p3-blob-a">✦ vibes ✦</div>
-                    <div class="p3-sticker-blob p3-blob-b">🎬</div>
-                    <div class="p3-sticker-blob p3-blob-c">content</div>
-
-                    <div class="p3-layout">
-                        <div class="p3-headline-block">
-                            <div class="p3-stamp">KMB WIDYODAYA</div>
-                            <h2 class="p3-title">Social Media<br>Officer</h2>
-                            <span class="p3-years">2025</span>
-                            <p class="p3-desc">Managed Instagram & TikTok content for organizational events and community engagement — feed posts, reels, copywriting, and live event reporting. Improved engagement and tracked social performance.</p>
-                        </div>
-                        <div class="p3-filmstrip">
-                            <!-- filmstrip frame 1 -->
-                            <div class="p3-film-frame">
-                                <div class="p3-sprockets">
-                                    <div class="p3-sp"></div><div class="p3-sp"></div><div class="p3-sp"></div>
-                                </div>
-                                <div class="p3-film-vid">
-                                    <video autoplay loop muted playsinline><source src="kmb1.MP4" type="video/mp4"></video>
-                                </div>
-                                <div class="p3-sprockets">
-                                    <div class="p3-sp"></div><div class="p3-sp"></div><div class="p3-sp"></div>
-                                </div>
-                                <div class="p3-film-label">HUT ke-80 RI</div>
-                            </div>
-                            <!-- filmstrip frame 2 -->
-                            <div class="p3-film-frame">
-                                <div class="p3-sprockets">
-                                    <div class="p3-sp"></div><div class="p3-sp"></div><div class="p3-sp"></div>
-                                </div>
-                                <div class="p3-film-vid">
-                                    <video autoplay loop muted playsinline><source src="kmb2.MP4" type="video/mp4"></video>
-                                </div>
-                                <div class="p3-sprockets">
-                                    <div class="p3-sp"></div><div class="p3-sp"></div><div class="p3-sp"></div>
-                                </div>
-                                <div class="p3-film-label">live report</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ══════════════════════════════════════════
-                     PANEL 4 — Dreamy / editorial magazine
-                     dusty lavender + gold foil + serif drama
-                ══════════════════════════════════════════ -->
-                <div class="exp-panel hidden" id="panel-4">
-
-                    <div class="p4-bg-gradient"></div>
-                    <!-- scattered circle deco -->
-                    <div class="p4-circle p4-c1"></div>
-                    <div class="p4-circle p4-c2"></div>
-                    <div class="p4-circle p4-c3"></div>
-
-                    <div class="p4-layout">
-                        <div class="p4-left">
-                            <div class="p4-issue-tag">TIKTOK · INSTAGRAM · VIRAL</div>
-                            <h2 class="p4-title">Social<br><em>Media</em></h2>
-                            <div class="p4-stat-row">
-                                <div class="p4-stat">
-                                    <span class="p4-stat-n">2</span>
-                                    <span class="p4-stat-l">Platforms<br>Managed</span>
-                                </div>
-                                <div class="p4-divider"></div>
-                                <div class="p4-stat">
-                                    <span class="p4-stat-n">∞</span>
-                                    <span class="p4-stat-l">Trend<br>Concepts</span>
-                                </div>
-                            </div>
-                            <p class="p4-desc">Created and managed engaging TikTok & Instagram content for ICN 2025 — strengthening audience interaction and organization presence through trend-aligned, viral-worthy concepts.</p>
-                            <span class="p4-date">ICN 2025</span>
-                        </div>
-                        <div class="p4-right">
-                            <div class="p4-vid-a">
-                                <video autoplay loop muted playsinline><source src="icn1.MP4" type="video/mp4"></video>
-                                <div class="p4-vid-label">ICN reel 01</div>
-                            </div>
-                            <div class="p4-vid-b">
-                                <video autoplay loop muted playsinline><source src="icn2.MP4" type="video/mp4"></video>
-                                <div class="p4-vid-label">ICN reel 02</div>
-                            </div>
-                            <!-- decorative quote -->
-                            <div class="p4-quote">"trend, film,<br>repeat"</div>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- end exp-panels-area -->
-        </div><!-- end exp-scene -->
-    </div>
-
-    <!-- SCREEN 5: CONTACT -->
-    <div class="section hidden" id="contactScreen" data-index="4">
-        <div class="contact-bg-text">LET'S TALK</div>
-        <div class="contact-container">
-            <div class="contact-eyebrow">
-                <span>say hi</span>
-                <svg class="contact-arrow" viewBox="0 0 60 14" fill="none" aria-hidden="true">
-                    <path d="M2 7 Q15 1 30 7 Q45 13 56 7" stroke="#c93030" stroke-width="2" stroke-linecap="round" fill="none"/>
-                    <path d="M50 3 L56 7 L50 11" stroke="#c93030" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                </svg>
-            </div>
-            <h2 class="contact-heading">Let's create<br>something <em>together</em></h2>
-            <p class="contact-sub">Open to brand collaborations, content projects, and freelance briefs ✨</p>
-
-            <!-- Primary CTA: resume -->
-            <a href="https://canva.link/zfjfq6b8fdy1nr1" target="_blank" rel="noopener noreferrer" class="contact-resume-cta" aria-label="View resume">
-                <div class="contact-resume-tape"></div>
-                <div class="contact-resume-inner">
-                    <div class="contact-resume-text">
-                        <span class="contact-resume-label">📄 RESUME</span>
-                        <span class="contact-resume-value">Take a look at my full CV</span>
-                    </div>
-                    <span class="contact-resume-arrow">view →</span>
-                </div>
-            </a>
-
-            <div class="contact-cards">
-                <a href="mailto:vellyscaelaine@gmail.com" class="contact-card contact-card-email" aria-label="Send email">
-                    <div class="contact-card-tape"></div>
-                    <span class="contact-card-label">EMAIL</span>
-                    <span class="contact-card-value">vellyscaelaine@<wbr>gmail.com</span>
-                    <span class="contact-card-cta">drop a line →</span>
-                </a>
-                <a href="https://wa.me/62811703768" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-whatsapp" aria-label="Chat on WhatsApp">
-                    <div class="contact-card-tape"></div>
-                    <span class="contact-card-label">WHATSAPP</span>
-                    <span class="contact-card-value">+62 811 703 768</span>
-                    <span class="contact-card-cta">let's chat →</span>
-                </a>
-                <a href="https://www.tiktok.com/@platedside" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-tiktok" aria-label="Visit TikTok">
-                    <div class="contact-card-tape"></div>
-                    <span class="contact-card-label">TIKTOK</span>
-                    <span class="contact-card-value">@platedside</span>
-                    <span class="contact-card-cta">watch the work →</span>
-                </a>
-                <a href="https://www.instagram.com/vellyscaa" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-instagram" aria-label="Visit Instagram">
-                    <div class="contact-card-tape"></div>
-                    <span class="contact-card-label">INSTAGRAM</span>
-                    <span class="contact-card-value">@vellyscaa</span>
-                    <span class="contact-card-cta">say hi →</span>
-                </a>
-                <a href="https://www.linkedin.com/in/elaine-vellysca-7932a6293/" target="_blank" rel="noopener noreferrer" class="contact-card contact-card-linkedin" aria-label="Visit LinkedIn">
-                    <div class="contact-card-tape"></div>
-                    <span class="contact-card-label">LINKEDIN</span>
-                    <span class="contact-card-value">Elaine Vellysca</span>
-                    <span class="contact-card-cta">connect →</span>
-                </a>
-            </div>
-
-            <span class="contact-signature">— made with care, by Elaine ♥</span>
+        <div class="arrow">→</div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2024</div>
+        <div class="body">
+          <h3>Internship <span class="em">Content Creator</span></h3>
+          <div class="company">S1 Branding · Prasetiya Mulya</div>
+          <p>Created engaging TikTok content aligned with brand identity, researched trends, and optimized strategy based on analytics insights — driving higher engagement and growth.</p>
+          <div class="focus"><span>Content</span><span>Trends</span><span>Analytics</span></div>
         </div>
+        <div class="video-thumb">
+          <video src="assets/branding2.MP4" autoplay muted loop playsinline preload="metadata"></video>
+          <span class="tag">brand reel</span>
+          <span class="play">▶</span>
+          <span class="dur">on brand</span>
+        </div>
+        <div class="arrow">→</div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2025</div>
+        <div class="body">
+          <h3>Social Media <span class="em">Officer</span></h3>
+          <div class="company">KMB Widyodaya</div>
+          <p>Managed Instagram & TikTok content for organizational events and community engagement — feed posts, reels, copywriting, live event reporting. Improved engagement and tracked social performance.</p>
+          <div class="focus"><span>Instagram</span><span>TikTok</span><span>Live Reporting</span></div>
+        </div>
+        <div class="video-thumb">
+          <video src="assets/kmb1.MP4" autoplay muted loop playsinline preload="metadata"></video>
+          <span class="tag">HUT 80 RI</span>
+          <span class="play">▶</span>
+          <span class="dur">live cover</span>
+        </div>
+        <div class="arrow">→</div>
+      </div>
+      <div class="timeline-item">
+        <div class="year">2025</div>
+        <div class="body">
+          <h3>Social Media <span class="em">Team</span></h3>
+          <div class="company">ICN 2025</div>
+          <p>Created and managed engaging TikTok & Instagram content, strengthening audience interaction and organizational presence through trend-aligned viral concepts.</p>
+          <div class="focus"><span>Reels</span><span>Trends</span><span>Community</span></div>
+        </div>
+        <div class="video-thumb">
+          <video src="assets/icn1.MP4" autoplay muted loop playsinline preload="metadata"></video>
+          <span class="tag">viral reel</span>
+          <span class="play">▶</span>
+          <span class="dur">trending</span>
+        </div>
+        <div class="arrow">→</div>
+      </div>
     </div>
+  </section>
 
-    <script src="script.js"></script>
+  <!-- NUMBERS / HIGHLIGHT -->
+  <section class="numbers">
+    <span class="doodle d1">a hero post ✦</span>
+    <span class="doodle d2">trend, film, repeat</span>
+    <span class="doodle d3">✿</span>
+    <div class="badge">★ best post so far</div>
+    <h3>One TikTok hit <span class="em">222K views</span> and 355+ watch hours — proof that strategy & feel can <span class="em">co-exist</span>.</h3>
+    <div class="stats">
+      <div class="stat">
+        <div class="big">222K</div>
+        <div class="label">Views · hero post</div>
+      </div>
+      <div class="stat">
+        <div class="big">355h+</div>
+        <div class="label">Watch time</div>
+      </div>
+      <div class="stat">
+        <div class="big">04</div>
+        <div class="label">Active roles</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY (polaroid placeholders) -->
+  <section class="gallery" id="gallery">
+    <div class="gallery-head">
+      <span class="eyebrow">moments ✦</span>
+      <h2>A few <span class="em">stills</span>.</h2>
+      <p>Six stills from on set, behind the scenes, and a few favorites along the way ✨</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="polaroid" style="--r:-4deg"><div class="photo"><img src="assets/me.jpeg" alt="Elaine"></div><div class="caption">hi, it's me ✨</div></div>
+      <div class="polaroid" style="--r:3deg"><div class="photo"><img src="assets/brandteaminternship.jpeg" alt="Brand team"></div><div class="caption">brand team 💼</div></div>
+      <div class="polaroid" style="--r:-2deg"><div class="photo"><img src="assets/capacitybuilding.jpeg" alt="Presenting"></div><div class="caption">presenting ✿</div></div>
+      <div class="polaroid" style="--r:5deg"><div class="photo"><img src="assets/kmb.jpeg" alt="KMB Widyodaya"></div><div class="caption">kmb widyodaya 🌸</div></div>
+      <div class="polaroid" style="--r:-3deg"><div class="photo"><img src="assets/eureca.jpeg" alt="Eureca night"></div><div class="caption">eureca night ★</div></div>
+      <div class="polaroid" style="--r:4deg"><div class="photo"><img src="assets/icn.jpeg" alt="ICN 2025"></div><div class="caption">icn 2025 ◆</div></div>
+      <div class="polaroid" style="--r:-5deg"><div class="photo"><img src="assets/brexplore.jpeg" alt="BR Explore"></div><div class="caption">br explore ✦</div></div>
+      <div class="polaroid" style="--r:2deg"><div class="photo"><img src="assets/compasbrandingproject.jpeg" alt="Compas Branding Project"></div><div class="caption">compas project 💫</div></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="contact-grid">
+      <div>
+        <h2>Let's create<br>something <span class="em">together</span>.</h2>
+        <div class="sig">— Elaine ♥</div>
+        <p>Open to brand collaborations, content projects, and freelance briefs. Send a hello — even a casual one — and we'll figure out the brief together.</p>
+      </div>
+      <div class="contact-links">
+        <a class="contact-link" href="mailto:vellyscaelaine@gmail.com">
+          <div><div class="label">email me</div><div class="value">vellyscaelaine@gmail.com</div></div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="contact-link" href="https://wa.me/62811703768" target="_blank" rel="noopener">
+          <div><div class="label">whatsapp</div><div class="value">+62 811 703 768</div></div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="contact-link" href="https://instagram.com/vellyscaa" target="_blank" rel="noopener">
+          <div><div class="label">instagram</div><div class="value">@vellyscaa</div></div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="contact-link" href="https://tiktok.com/@platedside" target="_blank" rel="noopener">
+          <div><div class="label">tiktok</div><div class="value">@platedside</div></div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="contact-link" href="https://linkedin.com" target="_blank" rel="noopener">
+          <div><div class="label">linkedin</div><div class="value">Elaine Vellysca</div></div>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 ELAINE VELLYSCA</span>
+    <span class="made">made with care, by Elaine <span class="heart">♥</span></span>
+    <span>JAKARTA · ID</span>
+  </footer>
+
+</main>
+
+<script>
+/* =========================================================
+   LENIS SMOOTH SCROLL
+   ========================================================= */
+const lenis = new Lenis({ duration: 1.2, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add(time => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
+
+/* =========================================================
+   THREE.JS — WARM DREAMSCAPE
+   ========================================================= */
+const isMobile = window.matchMedia('(max-width: 768px)').matches || (navigator.maxTouchPoints > 1);
+const canvas = document.getElementById('three-canvas');
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0xfae0d4, 0.012);
+
+const camera = new THREE.PerspectiveCamera(isMobile ? 62 : 55, window.innerWidth / window.innerHeight, 0.1, 600);
+camera.position.set(0, 4, 26);
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: false });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+renderer.setClearColor(0xfaecdc, 1);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+
+/* ---------- WARM SKY (gradient sphere shader) ---------- */
+const skyGeo = new THREE.SphereGeometry(300, 32, 32);
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide,
+  uniforms: {
+    uTime: { value: 0 },
+    uTop: { value: new THREE.Color(0xfff2e0) },     // soft cream sky
+    uMid: { value: new THREE.Color(0xffd0c2) },     // peach midband
+    uBot: { value: new THREE.Color(0xffaab8) },     // rose horizon
+    uGlowA: { value: new THREE.Color(0xffd89c) },   // gold band
+    uGlowB: { value: new THREE.Color(0xff8aa3) }    // rose band
+  },
+  vertexShader: `varying vec3 vW; void main(){vW=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+  fragmentShader: `
+    uniform float uTime;
+    uniform vec3 uTop,uMid,uBot,uGlowA,uGlowB;
+    varying vec3 vW;
+    float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+    float noise(vec2 p){vec2 i=floor(p);vec2 f=fract(p);vec2 u=f*f*(3.0-2.0*f);return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}
+    void main(){
+      float h = normalize(vW).y;
+      vec3 base = mix(uBot, uMid, smoothstep(-0.25, 0.4, h));
+      base = mix(base, uTop, smoothstep(0.3, 0.95, h));
+      // soft warm horizon glow band
+      float band = noise(vec2(vW.x*0.005 + uTime*0.03, vW.y*0.02));
+      float bandMask = smoothstep(0.4, 0.7, band) * smoothstep(-0.1, 0.45, h) * (1.0 - smoothstep(0.5, 0.85, h));
+      vec3 glow = mix(uGlowA, uGlowB, sin(vW.x*0.012 + uTime*0.18)*0.5+0.5);
+      base = mix(base, base + glow*0.4, bandMask*0.55);
+      gl_FragColor = vec4(base, 1.0);
+    }
+  `
+});
+scene.add(new THREE.Mesh(skyGeo, skyMat));
+
+/* ---------- SOFT TERRAIN (rolling rose dunes) ---------- */
+const terrainGeo = new THREE.PlaneGeometry(220, 220, 110, 110);
+const tv = terrainGeo.attributes.position;
+for (let i = 0; i < tv.count; i++) {
+  const x = tv.getX(i), y = tv.getY(i);
+  const dist = Math.sqrt(x*x + y*y);
+  const ridge = Math.sin(x * 0.05) * Math.cos(y * 0.05) * 1.1;
+  const rolling = Math.sin(x * 0.13) * 0.4 + Math.cos(y * 0.11) * 0.4;
+  const noise = (Math.sin(x*0.6+y*0.4) + Math.cos(x*0.3-y*0.5)) * 0.18;
+  const crater = -Math.exp(-dist*dist*0.01) * 1.0;
+  tv.setZ(i, ridge + rolling + noise + crater);
+}
+terrainGeo.computeVertexNormals();
+const terrainMat = new THREE.MeshStandardMaterial({
+  color: 0xf6c8b4, roughness: 0.92, metalness: 0.02, flatShading: true
+});
+const terrain = new THREE.Mesh(terrainGeo, terrainMat);
+terrain.rotation.x = -Math.PI / 2;
+terrain.position.y = -3;
+scene.add(terrain);
+
+/* ---------- CENTRAL GLOWING PEARL ---------- */
+const iglooGroup = new THREE.Group();
+scene.add(iglooGroup);
+
+const pearlGeo = new THREE.SphereGeometry(1.4, 64, 64);
+const pearlMat = new THREE.MeshStandardMaterial({
+  color: 0xffe6d6, emissive: 0xffb89a, emissiveIntensity: 1.6,
+  roughness: 0.15, metalness: 0.4
+});
+const pearl = new THREE.Mesh(pearlGeo, pearlMat);
+pearl.position.y = 1;
+iglooGroup.add(pearl);
+
+// halo around pearl
+const haloMat = new THREE.ShaderMaterial({
+  transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+  uniforms: { uTime: { value: 0 }, uColor: { value: new THREE.Color(0xff8aa3) } },
+  vertexShader: `varying vec3 vN; void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+  fragmentShader: `uniform float uTime;uniform vec3 uColor;varying vec3 vN;void main(){float f=pow(1.0-abs(vN.z),3.0);gl_FragColor=vec4(uColor*f*(0.6+0.4*sin(uTime*1.2)),f*0.55);}`
+});
+const halo = new THREE.Mesh(new THREE.SphereGeometry(2.6, 32, 32), haloMat);
+halo.position.copy(pearl.position);
+iglooGroup.add(halo);
+
+/* ---------- POLAROID FACTORY (real photos via 2 stacked planes) ---------- */
+const texLoader = new THREE.TextureLoader();
+const polaroidPaperGeo = new THREE.PlaneGeometry(2.0, 2.5);
+const polaroidPhotoGeo = new THREE.PlaneGeometry(1.7, 1.7);
+const polaroidPaperMat = new THREE.MeshStandardMaterial({
+  color: 0xfdf6ec, roughness: 0.85, metalness: 0.04,
+  side: THREE.DoubleSide,
+  emissive: 0xfdf6ec, emissiveIntensity: 0.1
+});
+
+// Use base64 data URLs (works from file://) if available;
+// fall back to relative file paths (works only over a local server).
+const polaroidPhotos = (window.POLAROID_DATA_URLS && window.POLAROID_DATA_URLS.length)
+  ? window.POLAROID_DATA_URLS
+  : [
+      'assets/elaine.png',
+      'assets/platedside1.jpg',
+      'assets/branding1.jpg',
+      'assets/photo.jpg',
+      'assets/photo.png',
+      'assets/camera.png',
+      'assets/book.png',
+      'assets/elaine.png'
+    ];
+
+const polaroids = [];
+polaroidPhotos.forEach((path, i) => {
+  // build the polaroid group immediately so position/orbit is set,
+  // then load the photo texture asynchronously.
+  const group = new THREE.Group();
+  const paper = new THREE.Mesh(polaroidPaperGeo, polaroidPaperMat);
+  group.add(paper);
+
+  // photo plane — start with a soft cream so it's not jarring before load
+  const photoMat = new THREE.MeshStandardMaterial({
+    color: 0xf4dccd, roughness: 0.7, metalness: 0.05,
+    side: THREE.DoubleSide
+  });
+  const photo = new THREE.Mesh(polaroidPhotoGeo, photoMat);
+  photo.position.set(0, 0.18, 0.005);
+  group.add(photo);
+
+  texLoader.load(path, tex => {
+    if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+    else tex.encoding = THREE.sRGBEncoding;
+    // crop center to square so different aspect ratios don't stretch
+    const aspect = tex.image.width / tex.image.height;
+    tex.center.set(0.5, 0.5);
+    if (aspect > 1) { tex.repeat.set(1/aspect, 1); tex.offset.set((1 - 1/aspect)/2, 0); }
+    else if (aspect < 1) { tex.repeat.set(1, aspect); tex.offset.set(0, (1 - aspect)/2); }
+    photoMat.map = tex;
+    photoMat.color.set(0xffffff);
+    photoMat.needsUpdate = true;
+  });
+
+  const r = 5 + Math.random() * 4;
+  const a = (i / polaroidPhotos.length) * Math.PI * 2 + Math.random() * 0.3;
+  const y = -1 + Math.random() * 3;
+  group.userData = { r, a, y, speed: 0.05 + Math.random() * 0.1, tilt: Math.random() * 0.5 };
+  group.position.set(Math.cos(a) * r, y, Math.sin(a) * r);
+  group.rotation.y = -a + Math.PI/2;
+  group.rotation.z = (Math.random() - 0.5) * 0.4;
+
+  iglooGroup.add(group);
+  polaroids.push(group);
+});
+
+/* ---------- FILM STRIP RIBBON ---------- */
+function makeFilmStripTexture() {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 128;
+  const ctx = c.getContext('2d');
+  // soft dusty rose film body (was charcoal — lighten to match palette)
+  ctx.fillStyle = '#e9b9c1';
+  ctx.fillRect(0,0,512,128);
+  // sprocket holes — cream
+  ctx.fillStyle = '#fdf6ec';
+  for (let i = 0; i < 8; i++) {
+    ctx.fillRect(i*64+16, 8, 32, 16);
+    ctx.fillRect(i*64+16, 104, 32, 16);
+  }
+  // film cells — soft warm pastels
+  const cellTones = ['#ffd6c2','#ffc2d6','#ffd89c','#ffb89a'];
+  for (let i = 0; i < 4; i++) {
+    const x = i*128 + 12;
+    ctx.fillStyle = cellTones[i];
+    ctx.fillRect(x, 32, 104, 64);
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = THREE.RepeatWrapping;
+  t.repeat.x = 4;
+  return t;
+}
+const filmTex = makeFilmStripTexture();
+const filmCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-12, 5, -4),
+  new THREE.Vector3(-6, 7, 4),
+  new THREE.Vector3(2, 4, 6),
+  new THREE.Vector3(8, 6, 0),
+  new THREE.Vector3(11, 3, -6),
+  new THREE.Vector3(4, 2, -10)
+], false, 'catmullrom', 0.5);
+const filmGeo = new THREE.TubeGeometry(filmCurve, 200, 0.32, 4, false);
+const filmMat = new THREE.MeshStandardMaterial({
+  map: filmTex, roughness: 0.85, metalness: 0.05, side: THREE.DoubleSide,
+  transparent: true, opacity: 0.78
+});
+const filmStrip = new THREE.Mesh(filmGeo, filmMat);
+iglooGroup.add(filmStrip);
+
+// second film ribbon, opposite path
+const filmCurve2 = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(11, -1, 4),
+  new THREE.Vector3(4, 0, 8),
+  new THREE.Vector3(-3, 3, 5),
+  new THREE.Vector3(-9, 1, -2),
+  new THREE.Vector3(-6, -1, -8),
+  new THREE.Vector3(2, 0, -6)
+], false, 'catmullrom', 0.5);
+const filmStrip2 = new THREE.Mesh(new THREE.TubeGeometry(filmCurve2, 200, 0.28, 4, false), filmMat.clone());
+iglooGroup.add(filmStrip2);
+
+/* ---------- ORBIT RINGS ---------- */
+const rings = [];
+const ringColors = [0xff8aa3, 0xffd89c, 0xc8a8d4];
+for (let i = 0; i < 3; i++) {
+  const g = new THREE.TorusGeometry(4.5 + i * 1.6, 0.018, 8, 200);
+  const m = new THREE.MeshBasicMaterial({ color: ringColors[i], transparent: true, opacity: 0.35 - i*0.08 });
+  const r = new THREE.Mesh(g, m);
+  r.rotation.x = Math.PI/2 - 0.15 + i * 0.1;
+  r.position.y = 0.8 + i * 0.2;
+  iglooGroup.add(r);
+  rings.push(r);
+}
+
+/* ---------- SPARKLES (gold dust) ---------- */
+const sparkleCount = isMobile ? 500 : 1400;
+const sparkleGeo = new THREE.BufferGeometry();
+const sparklePos = new Float32Array(sparkleCount * 3);
+const sparkleVel = new Float32Array(sparkleCount);
+for (let i = 0; i < sparkleCount; i++) {
+  sparklePos[i*3] = (Math.random()-0.5) * 110;
+  sparklePos[i*3+1] = Math.random() * 50 - 4;
+  sparklePos[i*3+2] = (Math.random()-0.5) * 110;
+  sparkleVel[i] = 0.005 + Math.random() * 0.02;
+}
+sparkleGeo.setAttribute('position', new THREE.BufferAttribute(sparklePos, 3));
+const sparkleMat = new THREE.PointsMaterial({
+  color: 0xffd89c, size: 0.13, transparent: true, opacity: 0.85,
+  blending: THREE.AdditiveBlending, depthWrite: false
+});
+const sparkles = new THREE.Points(sparkleGeo, sparkleMat);
+scene.add(sparkles);
+
+// pink petals (slightly larger, softer)
+const petalGeo = new THREE.BufferGeometry();
+const petalCount = isMobile ? 220 : 600;
+const petalPos = new Float32Array(petalCount * 3);
+for (let i = 0; i < petalCount; i++) {
+  petalPos[i*3] = (Math.random()-0.5) * 90;
+  petalPos[i*3+1] = Math.random() * 40 - 3;
+  petalPos[i*3+2] = (Math.random()-0.5) * 90;
+}
+petalGeo.setAttribute('position', new THREE.BufferAttribute(petalPos, 3));
+const petalMat = new THREE.PointsMaterial({
+  color: 0xff8aa3, size: 0.18, transparent: true, opacity: 0.6,
+  blending: THREE.AdditiveBlending, depthWrite: false
+});
+const petals = new THREE.Points(petalGeo, petalMat);
+scene.add(petals);
+
+/* ---------- DISTANT MARKERS (soft pillars) ---------- */
+const pillars = [];
+const pillarPos = [[-22,-2,-14],[20,-1.5,-18],[-12,-1,-30],[14,-2,-36],[-32,-1,-6],[28,-1,4]];
+pillarPos.forEach(([x,y,z]) => {
+  const h = 5 + Math.random()*7;
+  const g = new THREE.BoxGeometry(0.9 + Math.random()*0.6, h, 0.9 + Math.random()*0.6);
+  const m = new THREE.MeshStandardMaterial({ color: 0xe8a094, roughness: 0.7, metalness: 0.05 });
+  const mo = new THREE.Mesh(g, m);
+  mo.position.set(x, y + h/2, z);
+  mo.rotation.y = Math.random() * 0.4;
+  scene.add(mo);
+  pillars.push(mo);
+});
+
+/* ---------- LIGHTS ---------- */
+scene.add(new THREE.AmbientLight(0xfff0e6, 0.8));
+const sunLight = new THREE.DirectionalLight(0xfff0d6, 1.0);
+sunLight.position.set(15, 25, 12);
+scene.add(sunLight);
+const warmKey = new THREE.PointLight(0xff8aa3, 2.5, 50);
+warmKey.position.set(0, 4, 0);
+scene.add(warmKey);
+const goldFill = new THREE.PointLight(0xffd89c, 1.4, 40);
+goldFill.position.set(-8, 6, -4);
+scene.add(goldFill);
+const peachRim = new THREE.PointLight(0xffb89a, 1.0, 40);
+peachRim.position.set(10, 5, 8);
+scene.add(peachRim);
+
+/* =========================================================
+   CAMERA SCROLL CHOREOGRAPHY
+   ========================================================= */
+const camStops = [
+  { pos: [0, 4, 26],  look: [0, 0.5, 0] },   // hero — wide warm vista
+  { pos: [-12, 3, 14], look: [0, 0.8, 0] },  // 01 hello — orbit left
+  { pos: [12, 2, 12],  look: [0, 0.8, 0] },  // 02 craft — orbit right, lower
+  { pos: [0, 8, 9],    look: [0, 0.8, 0] },  // 03 tools — top down close
+  { pos: [-5, 1.5, 8], look: [0, 0.8, 0] }   // 04 now — low close
+];
+const camTarget = { x: camStops[0].pos[0], y: camStops[0].pos[1], z: camStops[0].pos[2], lx: 0, ly: 0.5, lz: 0 };
+const lerp = (a,b,t) => a + (b-a)*t;
+
+gsap.registerPlugin(ScrollTrigger);
+
+ScrollTrigger.create({
+  trigger: '.cinema',
+  start: 'top top',
+  end: 'bottom bottom',
+  onUpdate: self => {
+    const p = self.progress;
+    const segments = camStops.length - 2; // 3 segments across 4 cinema scenes
+    const seg = Math.min(segments - 1, Math.floor(p * segments));
+    const localT = (p * segments) - seg;
+    const a = camStops[seg + 1];
+    const b = camStops[seg + 2] || a;
+    camTarget.x = lerp(a.pos[0], b.pos[0], localT);
+    camTarget.y = lerp(a.pos[1], b.pos[1], localT);
+    camTarget.z = lerp(a.pos[2], b.pos[2], localT);
+    camTarget.lx = lerp(a.look[0], b.look[0], localT);
+    camTarget.ly = lerp(a.look[1], b.look[1], localT);
+    camTarget.lz = lerp(a.look[2], b.look[2], localT);
+  }
+});
+
+ScrollTrigger.create({
+  trigger: '.hero',
+  start: 'top top',
+  end: 'bottom top',
+  onUpdate: self => {
+    const p = self.progress;
+    const a = camStops[0], b = camStops[1];
+    camTarget.x = lerp(a.pos[0], b.pos[0], p);
+    camTarget.y = lerp(a.pos[1], b.pos[1], p);
+    camTarget.z = lerp(a.pos[2], b.pos[2], p);
+    camTarget.lx = lerp(a.look[0], b.look[0], p);
+    camTarget.ly = lerp(a.look[1], b.look[1], p);
+    camTarget.lz = lerp(a.look[2], b.look[2], p);
+  }
+});
+
+// after cinema — pull back wide
+ScrollTrigger.create({
+  trigger: '.skills',
+  start: 'top bottom',
+  end: 'bottom top',
+  onUpdate: self => {
+    const p = self.progress;
+    const a = camStops[camStops.length - 1];
+    const b = { pos: [0, 12, 50], look: [0, 0, 0] };
+    camTarget.x = lerp(a.pos[0], b.pos[0], p);
+    camTarget.y = lerp(a.pos[1], b.pos[1], p);
+    camTarget.z = lerp(a.pos[2], b.pos[2], p);
+    camTarget.lx = lerp(a.look[0], b.look[0], p);
+    camTarget.ly = lerp(a.look[1], b.look[1], p);
+    camTarget.lz = lerp(a.look[2], b.look[2], p);
+  }
+});
+
+// scene fades
+gsap.utils.toArray('.scene').forEach(el => {
+  gsap.fromTo(el, { autoAlpha: 0, y: 60 }, {
+    autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.6,
+    scrollTrigger: { trigger: el, start: 'top 70%', end: 'bottom 30%', toggleActions: 'play reverse play reverse' }
+  });
+});
+
+// HUD section counter — updates as you scroll through each section
+const hudEl = document.getElementById('hud-progress');
+const sectionLabels = [
+  ['.hero',    '01 / 06'],
+  ['.cinema',  '02 / 06'],
+  ['.skills',  '03 / 06'],
+  ['.work',    '04 / 06'],
+  ['.gallery', '05 / 06'],
+  ['.contact', '06 / 06']
+];
+sectionLabels.forEach(([sel, label]) => {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 55%',
+    end: 'bottom 45%',
+    onToggle: self => { if (self.isActive) hudEl.textContent = label; }
+  });
+});
+
+// reveals
+gsap.utils.toArray('.skill-card, .timeline-item, .video-thumb, .polaroid, .contact-link, .skills-head h2, .skills-head .lead, .gallery-head, .numbers .badge, .numbers h3, .numbers .stat').forEach(el => {
+  gsap.fromTo(el, { y: 36, opacity: 0 }, {
+    y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 88%' }
+  });
+});
+
+gsap.fromTo('.contact h2', { y: 80, opacity: 0 }, {
+  y: 0, opacity: 1, duration: 1.2, ease: 'power3.out',
+  scrollTrigger: { trigger: '.contact h2', start: 'top 80%' }
+});
+
+// floating deco stars in
+gsap.to('.deco-star', { opacity: .55, duration: 1.5, stagger: 0.2, delay: 1.6, ease: 'power2.out' });
+gsap.utils.toArray('.deco-star').forEach((el, i) => {
+  gsap.to(el, { y: '+=24', duration: 2.5 + i * 0.4, yoyo: true, repeat: -1, ease: 'sine.inOut' });
+});
+
+// hero side tag fade in
+gsap.to('.hero-tag', { opacity: 1, duration: 1.2, delay: 1.8, ease: 'power3.out' });
+
+/* =========================================================
+   MOUSE PARALLAX
+   ========================================================= */
+let mouseX = 0, mouseY = 0;
+window.addEventListener('mousemove', e => {
+  mouseX = (e.clientX / window.innerWidth - 0.5);
+  mouseY = (e.clientY / window.innerHeight - 0.5);
+});
+
+/* =========================================================
+   RENDER LOOP
+   ========================================================= */
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  camera.position.x += (camTarget.x + mouseX * 1.2 - camera.position.x) * 0.05;
+  camera.position.y += (camTarget.y - mouseY * 0.7 - camera.position.y) * 0.05;
+  camera.position.z += (camTarget.z - camera.position.z) * 0.05;
+  camera.lookAt(camTarget.lx, camTarget.ly, camTarget.lz);
+
+  skyMat.uniforms.uTime.value = t;
+  haloMat.uniforms.uTime.value = t;
+
+  // pearl breathing
+  pearl.scale.setScalar(1 + Math.sin(t * 1.1) * 0.05);
+  pearlMat.emissiveIntensity = 1.5 + Math.sin(t * 1.4) * 0.4;
+  pearl.rotation.y = t * 0.2;
+  halo.scale.setScalar(1 + Math.sin(t * 0.7) * 0.06);
+
+  // group slow rotate
+  iglooGroup.rotation.y = t * 0.04;
+
+  // rings
+  rings.forEach((r, i) => {
+    r.rotation.z = t * (0.06 + i * 0.03);
+    r.position.y = 0.8 + i * 0.2 + Math.sin(t * 0.5 + i) * 0.08;
+  });
+
+  // polaroids float
+  polaroids.forEach(p => {
+    p.userData.a += p.userData.speed * 0.005;
+    p.position.x = Math.cos(p.userData.a) * p.userData.r;
+    p.position.z = Math.sin(p.userData.a) * p.userData.r;
+    p.position.y = p.userData.y + Math.sin(t * p.userData.speed * 3 + p.userData.tilt) * 0.4;
+    p.rotation.y = -p.userData.a + Math.PI/2 + Math.sin(t * 0.4) * 0.05;
+    p.rotation.z = Math.sin(t * 0.5 + p.userData.tilt) * 0.15;
+  });
+
+  // film strip drift (rotate texture offset)
+  filmTex.offset.x = -t * 0.1;
+
+  // sparkle drift up
+  const sp = sparkleGeo.attributes.position;
+  for (let i = 0; i < sparkleCount; i++) {
+    let y = sp.getY(i) + sparkleVel[i];
+    if (y > 45) y = -3;
+    sp.setY(i, y);
+    sp.setX(i, sp.getX(i) + Math.sin(t * 0.3 + i) * 0.004);
+  }
+  sp.needsUpdate = true;
+
+  // petals slow drift down
+  const pp = petalGeo.attributes.position;
+  for (let i = 0; i < petalCount; i++) {
+    let y = pp.getY(i) - 0.012;
+    if (y < -3) y = 38;
+    pp.setY(i, y);
+    pp.setX(i, pp.getX(i) + Math.sin(t * 0.5 + i * 0.1) * 0.008);
+  }
+  pp.needsUpdate = true;
+
+  // light flicker
+  warmKey.intensity = 2.4 + Math.sin(t * 1.3) * 0.3;
+  goldFill.position.x = Math.sin(t * 0.2) * 8;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+/* =========================================================
+   LOADER → 3D CAMERA RISE + FLASH → HERO REVEAL
+   ========================================================= */
+const loaderTl = gsap.timeline();
+
+loaderTl
+  // 1. Camera rises from below with 3D tilt + slight overshoot bounce
+  .fromTo('#loader .camera-wrap',
+    { y: '120vh', rotateX: 35, rotateY: -8, scale: 0.65, opacity: 0 },
+    { y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1, duration: 1.2, ease: 'back.out(1.3)' },
+    0.15
+  )
+
+  // 2. Caption + hint fade in (synced with camera arrival)
+  .fromTo('#loader .cam-caption',
+    { opacity: 0, y: 14 },
+    { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' },
+    0.95
+  )
+  .fromTo('#loader .cam-hint',
+    { opacity: 0, y: 8 },
+    { opacity: .7, y: 0, duration: 0.4, ease: 'power3.out' },
+    1.05
+  )
+
+  // 3. Hold a beat, then "shutter click" shake — quick rotate left/right
+  .to('#loader .camera-wrap',
+    { rotation: -3, scale: 1.04, duration: 0.07, ease: 'power3.in' },
+    1.65
+  )
+  .to('#loader .camera-wrap',
+    { rotation: 3, duration: 0.07, ease: 'power2.inOut' },
+    1.72
+  )
+  .to('#loader .camera-wrap',
+    { rotation: 0, scale: 1, duration: 0.08, ease: 'power2.out' },
+    1.79
+  )
+
+  // 4. FLASH — quick white burst
+  .to('.cam-flash',
+    { opacity: 1, duration: 0.06, ease: 'power4.out' },
+    1.88
+  )
+
+  // 5. At flash peak, swap loader bg to transparent + hide camera
+  .set('#loader', { backgroundColor: 'transparent' }, 1.95)
+  .set('#loader .camera-wrap, #loader .cam-caption, #loader .cam-hint', { opacity: 0 }, 1.95)
+
+  // 6. Flash fades — page revealed underneath
+  .to('.cam-flash',
+    { opacity: 0, duration: 0.75, ease: 'power2.out' },
+    1.97
+  )
+
+  // 7. Remove loader from DOM
+  .set('#loader', { display: 'none' }, 2.75);
+
+// Hero reveal — kicks in WHILE flash is fading (page elements coming in via flash)
+loaderTl.add(() => {
+  gsap.fromTo('.hero h1 .row .inner', { y: '110%' }, { y: '0%', duration: 1.1, stagger: 0.08, ease: 'power4.out' });
+  gsap.fromTo('.hero-eyebrow', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' });
+  gsap.fromTo('.hero-sub', { opacity: 0, y: 20 }, { opacity: 0.85, y: 0, duration: 0.9, delay: 0.4, ease: 'power3.out' });
+  gsap.fromTo('.hero-meta', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, delay: 0.6, ease: 'power3.out' });
+}, 1.97);
+
+/* =========================================================
+   CUSTOM CURSOR
+   ========================================================= */
+const cur = document.querySelector('.cursor');
+const dotc = document.querySelector('.cursor-dot');
+if (window.matchMedia('(pointer: fine)').matches) {
+  document.addEventListener('mousemove', e => {
+    gsap.to(cur, { x: e.clientX, y: e.clientY, duration: 0.4, ease: 'power3.out' });
+    gsap.to(dotc, { x: e.clientX, y: e.clientY, duration: 0.1 });
+  });
+  document.querySelectorAll('a, .skill-card, .timeline-item, .polaroid, .contact-link').forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('active'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('active'));
+  });
+} else {
+  cur.style.display = 'none';
+  dotc.style.display = 'none';
+}
+</script>
 </body>
 </html>
