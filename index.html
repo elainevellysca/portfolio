@@ -50,12 +50,9 @@ a{color:inherit;text-decoration:none}
 /* CONTENT LAYER */
 .content{position:relative;z-index:5}
 
-/* LOADER — 3D camera rises + flash transition */
-#loader{position:fixed;inset:0;z-index:10000;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;overflow:hidden;perspective:1200px}
-#loader .camera-wrap{position:relative;transform-style:preserve-3d;will-change:transform;display:flex;align-items:center;justify-content:center}
-#loader .cam-img{width:min(360px,62vw);max-height:60vh;display:block;filter:drop-shadow(0 50px 80px rgba(45,31,37,.3)) drop-shadow(0 12px 24px rgba(255,138,163,.2))}
-#loader .cam-caption{font-family:var(--font-h);font-size:clamp(20px,3vw,28px);color:var(--rose);opacity:0;letter-spacing:.5px}
-#loader .cam-hint{font-family:var(--font-b);font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--muted);opacity:0;margin-top:-8px}
+/* LOADER — real Three.js 3D camera mesh rises + flash */
+#loader{position:fixed;inset:0;z-index:10000;background:var(--cream);overflow:hidden}
+#loader .cam-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
 .cam-flash{position:fixed;inset:0;background:#ffffff;opacity:0;pointer-events:none;z-index:10002}
 .cam-flash.tint{background:radial-gradient(ellipse at center,#ffffff 30%,#fff5e6 70%,#ffd6cc 100%)}
 
@@ -423,13 +420,9 @@ footer .made .heart{display:inline-block;transform:translateY(-1px)}
 <div class="cursor"></div>
 <div class="cursor-dot"></div>
 
-<!-- LOADER — 3D camera rises from below + flash -->
+<!-- LOADER — real 3D Three.js camera rises from below + flash -->
 <div id="loader">
-  <div class="camera-wrap">
-    <img class="cam-img" src="assets/camera.png" alt="">
-  </div>
-  <div class="cam-caption">say cheese ✨</div>
-  <div class="cam-hint">3 · 2 · 1 · click</div>
+  <canvas class="cam-canvas"></canvas>
 </div>
 <div class="cam-flash tint"></div>
 
@@ -472,7 +465,7 @@ footer .made .heart{display:inline-block;transform:translateY(-1px)}
     <div class="hero-meta">
       <div>
         <span>Portfolio · 2026</span>
-        <strong>Content Creator & Branding Student</strong>
+        <strong>Content Creator & Social Media Specialist</strong>
       </div>
       <div class="right">
         <span>based in</span>
@@ -669,8 +662,8 @@ footer .made .heart{display:inline-block;transform:translateY(-1px)}
       <div class="polaroid" style="--r:5deg"><div class="photo"><img src="assets/kmb.jpeg" alt="KMB Widyodaya"></div><div class="caption">kmb widyodaya 🌸</div></div>
       <div class="polaroid" style="--r:-3deg"><div class="photo"><img src="assets/eureca.jpeg" alt="Eureca night"></div><div class="caption">eureca night ★</div></div>
       <div class="polaroid" style="--r:4deg"><div class="photo"><img src="assets/icn.jpeg" alt="ICN 2025"></div><div class="caption">icn 2025 ◆</div></div>
-      <div class="polaroid" style="--r:-5deg"><div class="photo"><img src="assets/brexplore.jpeg" alt="BR Explore"></div><div class="caption">br explore ✦</div></div>
-      <div class="polaroid" style="--r:2deg"><div class="photo"><img src="assets/compasbrandingproject.jpeg" alt="Compas Branding Project"></div><div class="caption">compas project 💫</div></div>
+      <div class="polaroid" style="--r:-5deg"><div class="photo"><img src="assets/brexplore.jpeg" alt="BR Explore"></div><div class="caption">brexplore ✦</div></div>
+      <div class="polaroid" style="--r:2deg"><div class="photo"><img src="assets/compasbrandingproject.jpeg" alt="Compas Branding Project"></div><div class="caption">compass project 💫</div></div>
     </div>
   </section>
 
@@ -1230,70 +1223,602 @@ window.addEventListener('resize', () => {
 });
 
 /* =========================================================
-   LOADER → 3D CAMERA RISE + FLASH → HERO REVEAL
+   LOADER → REAL 3D INSTAX CAMERA → FLASH → HERO REVEAL
    ========================================================= */
+
+// ===== PROCEDURAL LEATHER BUMP MAP (grayscale for surface depth) =====
+function makeLeatherBump() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 512;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#808080';
+  ctx.fillRect(0, 0, 512, 512);
+  // Random bumps (light = raised, dark = recessed)
+  for (let i = 0; i < 6000; i++) {
+    const x = Math.random() * 512, y = Math.random() * 512;
+    const r = 1 + Math.random() * 3;
+    const dark = Math.random() < 0.55;
+    ctx.fillStyle = dark
+      ? `rgba(0,0,0,${0.10 + Math.random() * 0.18})`
+      : `rgba(255,255,255,${0.06 + Math.random() * 0.10})`;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  // Pore depths (darker — recessed)
+  for (let i = 0; i < 250; i++) {
+    const x = Math.random() * 512, y = Math.random() * 512;
+    const r = 3 + Math.random() * 6;
+    ctx.fillStyle = `rgba(0,0,0,${0.15 + Math.random() * 0.2})`;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+
+// ===== STAGE FLOOR GRADIENT (radial warm vignette below camera) =====
+function makeStageTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  g.addColorStop(0,   'rgba(255, 220, 180, 0.55)');
+  g.addColorStop(0.45,'rgba(200, 130, 100, 0.2)');
+  g.addColorStop(1,   'rgba(80, 40, 30, 0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 256, 256);
+  const tex = new THREE.CanvasTexture(c);
+  if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+  else tex.encoding = THREE.sRGBEncoding;
+  return tex;
+}
+
+// ===== PROCEDURAL LEATHER TEXTURE =====
+function makeLeatherTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 512;
+  const ctx = c.getContext('2d');
+  // Base saddle-brown with subtle gradient
+  const grd = ctx.createLinearGradient(0, 0, 512, 512);
+  grd.addColorStop(0, '#5a3018');
+  grd.addColorStop(0.5, '#7a4626');
+  grd.addColorStop(1, '#5a3018');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, 512, 512);
+  // Fine grain — random tiny dots
+  for (let i = 0; i < 30000; i++) {
+    const x = Math.random() * 512, y = Math.random() * 512;
+    ctx.fillStyle = Math.random() < 0.5
+      ? `rgba(20,10,5,${0.06 + Math.random() * 0.10})`
+      : `rgba(150,110,80,${0.04 + Math.random() * 0.08})`;
+    ctx.fillRect(x, y, 1.5, 1.5);
+  }
+  // Larger pores
+  for (let i = 0; i < 600; i++) {
+    const x = Math.random() * 512, y = Math.random() * 512;
+    ctx.fillStyle = `rgba(20,10,5,${0.10 + Math.random() * 0.15})`;
+    ctx.beginPath(); ctx.arc(x, y, 2 + Math.random() * 4, 0, Math.PI * 2); ctx.fill();
+  }
+  // Worn highlights
+  for (let i = 0; i < 80; i++) {
+    const x = Math.random() * 512, y = Math.random() * 512;
+    ctx.fillStyle = `rgba(180,130,90,${0.03 + Math.random() * 0.06})`;
+    ctx.beginPath(); ctx.arc(x, y, 8 + Math.random() * 16, 0, Math.PI * 2); ctx.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+  else tex.encoding = THREE.sRGBEncoding;
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.anisotropy = 4;
+  return tex;
+}
+
+// ===== PROCEDURAL STUDIO ENV MAP (for chrome/glass reflections) =====
+function makeStudioEnv(renderer) {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 256;
+  const ctx = c.getContext('2d');
+  // Sky gradient (warm cream → peach → rose)
+  const sky = ctx.createLinearGradient(0, 0, 0, 256);
+  sky.addColorStop(0,    '#fff5e8');
+  sky.addColorStop(0.45, '#ffd6c2');
+  sky.addColorStop(0.65, '#ff9a88');
+  sky.addColorStop(1,    '#5a2828');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, 512, 256);
+  // Soft "studio softbox" hotspots — give chrome multiple highlight points
+  const hotspots = [
+    [128, 60, 90, 0.55],
+    [384, 70, 70, 0.45],
+    [256, 30, 110, 0.4],
+    [80, 130, 60, 0.35]
+  ];
+  for (const [x, y, r, a] of hotspots) {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, `rgba(255,250,240,${a})`);
+    g.addColorStop(1, 'rgba(255,250,240,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(x - r, y - r, r * 2, r * 2);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+  else tex.encoding = THREE.sRGBEncoding;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const envMap = pmrem.fromEquirectangular(tex).texture;
+  pmrem.dispose();
+  tex.dispose();
+  return envMap;
+}
+
+// ===== BRAND TEXT TEXTURE =====
+function makeBrandTexture() {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 80;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, 256, 80);
+  ctx.fillStyle = '#fdf6ec';
+  ctx.fillRect(0, 0, 256, 80);
+  ctx.fillStyle = '#1a1014';
+  ctx.font = 'bold italic 36px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('instax', 110, 40);
+  // Orange brand dot
+  ctx.fillStyle = '#ff5e2c';
+  ctx.beginPath(); ctx.arc(196, 40, 8, 0, Math.PI * 2); ctx.fill();
+  const tex = new THREE.CanvasTexture(c);
+  if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+  else tex.encoding = THREE.sRGBEncoding;
+  return tex;
+}
+
+// Build a vintage Instax camera from Three.js primitives — two-tone cream+leather
+function createInstaxCamera() {
+  const group = new THREE.Group();
+
+  const w = 2.7, h = 1.95, d = 1.0, r = 0.22;
+  const bevelSize = 0.08;
+  const FRONT_Z = d/2 + bevelSize + 0.01;
+  const SIDE_X = w/2 + bevelSize + 0.01;
+
+  // ===== Materials (PBR with envMap baked into scene later) =====
+  const leatherTex = makeLeatherTexture();
+  const leatherBumpTex = makeLeatherBump();
+  const leatherMat = new THREE.MeshStandardMaterial({
+    map: leatherTex, color: 0xffffff,
+    roughness: 0.88, metalness: 0,
+    bumpMap: leatherBumpTex, bumpScale: 0.05
+  });
+  const sideLeatherMat = leatherMat.clone();
+  sideLeatherMat.map = leatherTex.clone();
+  sideLeatherMat.map.needsUpdate = true;
+  sideLeatherMat.map.repeat.set(0.6, 1);
+  sideLeatherMat.bumpMap = leatherBumpTex.clone();
+  sideLeatherMat.bumpMap.needsUpdate = true;
+  const creamMat = new THREE.MeshStandardMaterial({
+    color: 0xe8d4b8, roughness: 0.62, metalness: 0.04
+  });
+  const chromeMat = new THREE.MeshStandardMaterial({
+    color: 0xf2e4d0, roughness: 0.18, metalness: 1.0,
+    envMapIntensity: 1.4
+  });
+  const darkChromeMat = new THREE.MeshStandardMaterial({
+    color: 0xb89580, roughness: 0.32, metalness: 1.0,
+    envMapIntensity: 1.2
+  });
+  const blackMat = new THREE.MeshStandardMaterial({
+    color: 0x14101a, roughness: 0.5, metalness: 0.25
+  });
+
+  // ===== MAIN BODY (rounded rectangle extrude, cream base) =====
+  const shape = new THREE.Shape();
+  shape.moveTo(-w/2 + r, -h/2);
+  shape.lineTo(w/2 - r, -h/2);
+  shape.quadraticCurveTo(w/2, -h/2, w/2, -h/2 + r);
+  shape.lineTo(w/2, h/2 - r);
+  shape.quadraticCurveTo(w/2, h/2, w/2 - r, h/2);
+  shape.lineTo(-w/2 + r, h/2);
+  shape.quadraticCurveTo(-w/2, h/2, -w/2, h/2 - r);
+  shape.lineTo(-w/2, -h/2 + r);
+  shape.quadraticCurveTo(-w/2, -h/2, -w/2 + r, -h/2);
+  const bodyGeo = new THREE.ExtrudeGeometry(shape, {
+    depth: d, bevelEnabled: true,
+    bevelThickness: bevelSize, bevelSize: bevelSize, bevelSegments: 6
+  });
+  bodyGeo.translate(0, 0, -d/2);
+  group.add(new THREE.Mesh(bodyGeo, creamMat));
+
+  // ===== BROWN LEATHER WRAP (front + sides, lower 60%) =====
+  const leatherH = h * 0.6;
+  const leatherY = -(h/2) + leatherH/2 + 0.02;
+  const frontLeather = new THREE.Mesh(
+    new THREE.PlaneGeometry(w * 0.99, leatherH),
+    leatherMat
+  );
+  frontLeather.position.set(0, leatherY, FRONT_Z);
+  group.add(frontLeather);
+
+  const sideLeatherGeo = new THREE.PlaneGeometry(d * 0.97, leatherH);
+  const leftLeather = new THREE.Mesh(sideLeatherGeo, sideLeatherMat);
+  leftLeather.rotation.y = -Math.PI/2;
+  leftLeather.position.set(-SIDE_X, leatherY, 0);
+  group.add(leftLeather);
+  const rightLeather = new THREE.Mesh(sideLeatherGeo, sideLeatherMat);
+  rightLeather.rotation.y = Math.PI/2;
+  rightLeather.position.set(SIDE_X, leatherY, 0);
+  group.add(rightLeather);
+
+  // ===== CHROME DIVIDING STRIP =====
+  const strip = new THREE.Mesh(
+    new THREE.PlaneGeometry(w * 0.99, 0.05),
+    chromeMat
+  );
+  strip.position.set(0, leatherY + leatherH/2, FRONT_Z + 0.005);
+  group.add(strip);
+
+  // ===== LENS ASSEMBLY =====
+  const lensY = leatherY + 0.0;
+  const lensZ = FRONT_Z;
+
+  // Outer chrome ring (largest, slightly raised)
+  const outerRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.78, 0.06, 24, 64),
+    chromeMat
+  );
+  outerRing.position.set(0, lensY, lensZ + 0.04);
+  group.add(outerRing);
+
+  // Lens housing barrel — dark plastic, more chunky
+  const housing = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.7, 0.74, 0.5, 48),
+    blackMat
+  );
+  housing.rotation.x = Math.PI / 2;
+  housing.position.set(0, lensY, lensZ + 0.22);
+  group.add(housing);
+
+  // Mid chrome accent (around housing)
+  const midRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.72, 0.025, 16, 56),
+    darkChromeMat
+  );
+  midRing.position.set(0, lensY, lensZ + 0.30);
+  group.add(midRing);
+
+  // Decorative label band (engraved text-look ring)
+  const labelBand = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.74, 0.74, 0.1, 48),
+    new THREE.MeshStandardMaterial({ color: 0x251612, roughness: 0.7, metalness: 0.3 })
+  );
+  labelBand.rotation.x = Math.PI / 2;
+  labelBand.position.set(0, lensY, lensZ + 0.36);
+  group.add(labelBand);
+
+  // Inner chrome ring (close to glass)
+  const innerRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.58, 0.04, 18, 56),
+    chromeMat
+  );
+  innerRing.position.set(0, lensY, lensZ + 0.45);
+  group.add(innerRing);
+
+  // Lens glass (deep + blue emissive tint)
+  const glass = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.54, 0.54, 0.04, 48),
+    new THREE.MeshStandardMaterial({
+      color: 0x05060a, roughness: 0.05, metalness: 1.0,
+      envMapIntensity: 0.55,
+      emissive: 0x1a3a6a, emissiveIntensity: 0.4
+    })
+  );
+  glass.rotation.x = Math.PI / 2;
+  glass.position.set(0, lensY, lensZ + 0.47);
+  group.add(glass);
+
+  // Inner pupil (very dark center)
+  const pupil = new THREE.Mesh(
+    new THREE.CircleGeometry(0.22, 32),
+    new THREE.MeshStandardMaterial({
+      color: 0x000000, roughness: 0.05, metalness: 1.0,
+      envMapIntensity: 0.3
+    })
+  );
+  pupil.position.set(0, lensY, lensZ + 0.50);
+  group.add(pupil);
+
+  // Specular highlights (premium look)
+  const hl1 = new THREE.Mesh(
+    new THREE.CircleGeometry(0.18, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.65 })
+  );
+  hl1.position.set(-0.22, lensY + 0.18, lensZ + 0.51);
+  group.add(hl1);
+  const hl2 = new THREE.Mesh(
+    new THREE.CircleGeometry(0.07, 24),
+    new THREE.MeshBasicMaterial({ color: 0xffd6c2, transparent: true, opacity: 0.7 })
+  );
+  hl2.position.set(0.16, lensY - 0.16, lensZ + 0.51);
+  group.add(hl2);
+
+  // ===== SELFIE MIRROR (small chrome circle, right of main lens) =====
+  const selfieRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.2, 0.025, 16, 32),
+    chromeMat
+  );
+  selfieRing.position.set(1.0, lensY + 0.45, lensZ + 0.03);
+  group.add(selfieRing);
+  const selfieMirror = new THREE.Mesh(
+    new THREE.CircleGeometry(0.18, 32),
+    new THREE.MeshStandardMaterial({
+      color: 0xffe8d6, roughness: 0.05, metalness: 1.0, envMapIntensity: 1.6
+    })
+  );
+  selfieMirror.position.set(1.0, lensY + 0.45, lensZ + 0.035);
+  group.add(selfieMirror);
+
+  // ===== TOP SECTION =====
+  const topY = h/2 - 0.36;
+
+  // Viewfinder window (top-left, dark housing)
+  const vf = new THREE.Mesh(
+    new THREE.BoxGeometry(0.30, 0.22, 0.08),
+    blackMat
+  );
+  vf.position.set(-1.05, topY, FRONT_Z + 0.02);
+  group.add(vf);
+  // Viewfinder glass
+  const vfGlass = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.24, 0.16),
+    new THREE.MeshStandardMaterial({
+      color: 0x4a6a8a, roughness: 0.1, metalness: 0.95,
+      envMapIntensity: 1.0, emissive: 0x2a4a6a, emissiveIntensity: 0.4
+    })
+  );
+  vfGlass.position.set(-1.05, topY, FRONT_Z + 0.061);
+  group.add(vfGlass);
+
+  // Flash strip (long horizontal bar)
+  const flash = new THREE.Mesh(
+    new THREE.BoxGeometry(0.85, 0.22, 0.08),
+    new THREE.MeshStandardMaterial({
+      color: 0xfdf6ec, roughness: 0.35, metalness: 0.15,
+      emissive: 0xffffff, emissiveIntensity: 0.25
+    })
+  );
+  flash.position.set(0.05, topY, FRONT_Z + 0.02);
+  group.add(flash);
+
+  // Flash bulbs (3 small white circles inside flash) — taggable for shutter pulse
+  for (let i = 0; i < 3; i++) {
+    const bulb = new THREE.Mesh(
+      new THREE.CircleGeometry(0.045, 18),
+      new THREE.MeshStandardMaterial({
+        color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.7
+      })
+    );
+    bulb.position.set(-0.20 + i * 0.20, topY, FRONT_Z + 0.062);
+    bulb.userData.role = 'flashBulb';
+    group.add(bulb);
+  }
+
+  // INSTAX brand plate (textured)
+  const brandTex = makeBrandTexture();
+  const brandPlate = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.55, 0.18),
+    new THREE.MeshStandardMaterial({
+      map: brandTex, roughness: 0.55, metalness: 0.05
+    })
+  );
+  brandPlate.position.set(0.92, topY - 0.02, FRONT_Z + 0.062);
+  group.add(brandPlate);
+
+  // ===== SHUTTER BUTTON (top edge, big silver chrome, recessed cap) =====
+  const shutter = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.20, 0.20, 0.16, 32),
+    chromeMat
+  );
+  shutter.position.set(1.05, h/2 + 0.08, 0);
+  group.add(shutter);
+  const shutterCap = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.13, 0.13, 0.17, 28),
+    darkChromeMat
+  );
+  shutterCap.position.set(1.05, h/2 + 0.08, 0);
+  group.add(shutterCap);
+  const shutterDot = new THREE.Mesh(
+    new THREE.CircleGeometry(0.045, 18),
+    new THREE.MeshBasicMaterial({ color: 0xff5e2c })
+  );
+  shutterDot.rotation.x = -Math.PI/2;
+  shutterDot.position.set(1.05, h/2 + 0.165, 0);
+  group.add(shutterDot);
+
+  // ===== STRAP EYELETS (small chrome rings on sides) =====
+  for (const sx of [-SIDE_X, SIDE_X]) {
+    const eyelet = new THREE.Mesh(
+      new THREE.TorusGeometry(0.07, 0.02, 12, 28),
+      darkChromeMat
+    );
+    eyelet.rotation.y = Math.PI/2;
+    eyelet.position.set(sx, h/2 - 0.18, 0);
+    group.add(eyelet);
+  }
+
+  // ===== STAGE GROUND (radial warm vignette — studio backdrop feel) =====
+  const stage = new THREE.Mesh(
+    new THREE.PlaneGeometry(7, 7),
+    new THREE.MeshBasicMaterial({
+      map: makeStageTexture(), transparent: true, depthWrite: false,
+      blending: THREE.NormalBlending
+    })
+  );
+  stage.rotation.x = -Math.PI/2;
+  stage.position.set(0, -h/2 - 0.5, 0);
+  group.add(stage);
+
+  // ===== CONTACT SHADOW (sharper dark oval right under cam) =====
+  const shadow = new THREE.Mesh(
+    new THREE.CircleGeometry(1.4, 48),
+    new THREE.MeshBasicMaterial({
+      color: 0x2d1f25, transparent: true, opacity: 0.28,
+      depthWrite: false
+    })
+  );
+  shadow.rotation.x = -Math.PI/2;
+  shadow.position.set(0, -h/2 - 0.49, 0);
+  shadow.scale.set(1.0, 0.45, 1.0);
+  group.add(shadow);
+
+  return group;
+}
+
+// Set up dedicated loader scene + canvas
+const loaderCanvas = document.querySelector('#loader .cam-canvas');
+const lcScene = new THREE.Scene();
+const lcCam = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 50);
+lcCam.position.set(0, 0.4, 6.5);
+lcCam.lookAt(0, 0, 0);
+
+const lcRenderer = new THREE.WebGLRenderer({ canvas: loaderCanvas, alpha: true, antialias: true });
+lcRenderer.setSize(window.innerWidth, window.innerHeight);
+lcRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+// Auto-fit camera Z so the body never gets cropped on narrow viewports
+function fitLoaderCamera() {
+  const aspect = window.innerWidth / window.innerHeight;
+  lcCam.aspect = aspect;
+  const fovRad = lcCam.fov * Math.PI / 180;
+  const halfH = 1.4;   // half of body+shadow vertical span
+  const halfW = 1.6;   // half of body horizontal span (with margin)
+  const distV = halfH / Math.tan(fovRad / 2);
+  const distH = halfW / (Math.tan(fovRad / 2) * aspect);
+  const dist = Math.max(distV, distH) * 1.10;  // 10% padding
+  lcCam.position.z = Math.max(dist, 5.5);
+  lcCam.position.y = aspect < 1 ? 0.2 : 0.4;   // less vertical offset on portrait
+  lcCam.lookAt(0, 0, 0);
+  lcCam.updateProjectionMatrix();
+  lcRenderer.setSize(window.innerWidth, window.innerHeight);
+}
+fitLoaderCamera();
+if (THREE.SRGBColorSpace) lcRenderer.outputColorSpace = THREE.SRGBColorSpace;
+else lcRenderer.outputEncoding = THREE.sRGBEncoding;
+lcRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+lcRenderer.toneMappingExposure = 0.95;
+
+// Studio environment map for chrome/glass reflections (PBR baseline)
+lcScene.environment = makeStudioEnv(lcRenderer);
+
+// Soft directional fills on top of envMap
+lcScene.add(new THREE.AmbientLight(0xfff0e0, 0.18));
+const lcKey = new THREE.DirectionalLight(0xfff5e0, 0.85);
+lcKey.position.set(3, 5, 6);
+lcScene.add(lcKey);
+const lcFill = new THREE.PointLight(0xffb89a, 0.55, 14);
+lcFill.position.set(-3, 1, 4);
+lcScene.add(lcFill);
+const lcRim = new THREE.PointLight(0xffd89c, 0.4, 12);
+lcRim.position.set(2, -2, 3);
+lcScene.add(lcRim);
+
+// Insert the 3D camera mesh
+const camMesh = createInstaxCamera();
+lcScene.add(camMesh);
+
+// Render loop — runs only during loader phase
+let loaderActive = true;
+function lcRender() {
+  if (!loaderActive) return;
+  requestAnimationFrame(lcRender);
+  lcRenderer.render(lcScene, lcCam);
+}
+lcRender();
+
+// Resize handler (active during loader) — re-fit camera on viewport changes
+const lcResize = () => {
+  if (!loaderActive) return;
+  fitLoaderCamera();
+};
+window.addEventListener('resize', lcResize);
+
+// Cleanup function for after loader done
+function killLoaderScene() {
+  loaderActive = false;
+  window.removeEventListener('resize', lcResize);
+  lcScene.traverse(obj => {
+    if (obj.geometry) obj.geometry.dispose();
+    if (obj.material) {
+      if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose());
+      else obj.material.dispose();
+    }
+  });
+  lcRenderer.dispose();
+}
+
+// Collect flash bulbs (for shutter-shake pulse)
+const flashBulbs = [];
+camMesh.traverse(o => { if (o.userData && o.userData.role === 'flashBulb') flashBulbs.push(o); });
+const flashBulbMats = flashBulbs.map(b => b.material);
+
+// Idle sway combo (Y rotate + tiny X tilt — natural breathing while idle)
+// Land at 3/4 angle (Y≈0.22) so user sees front + side leather
+const idleSway = gsap.to(camMesh.rotation, {
+  y: 0.45, x: 0.06, duration: 2.6, repeat: -1, yoyo: true, ease: 'sine.inOut', paused: true
+});
+
+// MAIN LOADER TIMELINE
 const loaderTl = gsap.timeline();
 
 loaderTl
-  // 1. Camera rises from below with 3D tilt + slight overshoot bounce
-  .fromTo('#loader .camera-wrap',
-    { y: '120vh', rotateX: 35, rotateY: -8, scale: 0.65, opacity: 0 },
-    { y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1, duration: 1.2, ease: 'back.out(1.3)' },
-    0.15
-  )
+  // 1. Camera rises from below with 3D tilt + bouncy scale (lands at 3/4 view)
+  .fromTo(camMesh.position,
+    { x: 0, y: -5, z: 0 },
+    { x: 0, y: 0, z: 0, duration: 1.3, ease: 'back.out(1.25)' }, 0.15)
+  .fromTo(camMesh.rotation,
+    { x: 0.65, y: -0.5, z: 0.18 },
+    { x: 0, y: 0.22, z: 0, duration: 1.3, ease: 'back.out(1.25)' }, 0.15)  // 3/4 angle (~12°)
+  .fromTo(camMesh.scale,
+    { x: 0.55, y: 0.55, z: 0.55 },
+    { x: 1.0, y: 1.0, z: 1.0, duration: 1.3, ease: 'back.out(1.25)' }, 0.15)
 
-  // 2. Caption + hint fade in (synced with camera arrival)
-  .fromTo('#loader .cam-caption',
-    { opacity: 0, y: 14 },
-    { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' },
-    0.95
-  )
-  .fromTo('#loader .cam-hint',
-    { opacity: 0, y: 8 },
-    { opacity: .7, y: 0, duration: 0.4, ease: 'power3.out' },
-    1.05
-  )
+  // 2. Start idle sway after rise (Y + X combo for natural feel)
+  .add(() => idleSway.play(), 1.45)
 
-  // 3. Hold a beat, then "shutter click" shake — quick rotate left/right
-  .to('#loader .camera-wrap',
-    { rotation: -3, scale: 1.04, duration: 0.07, ease: 'power3.in' },
-    1.65
-  )
-  .to('#loader .camera-wrap',
-    { rotation: 3, duration: 0.07, ease: 'power2.inOut' },
-    1.72
-  )
-  .to('#loader .camera-wrap',
-    { rotation: 0, scale: 1, duration: 0.08, ease: 'power2.out' },
-    1.79
-  )
+  // 4. Stop sway, square up for the shot
+  .add(() => idleSway.pause(), 1.78)
+  .to(camMesh.rotation, { x: 0, y: 0, duration: 0.20, ease: 'power3.out' }, 1.78)
 
-  // 4. FLASH — quick white burst
-  .to('.cam-flash',
-    { opacity: 1, duration: 0.06, ease: 'power4.out' },
-    1.88
-  )
+  // 5. PRE-FLASH BULB GLOW — bulbs ramp up before the click
+  .to(flashBulbMats, { emissiveIntensity: 1.8, duration: 0.18, ease: 'power2.in' }, 1.92)
 
-  // 5. At flash peak, swap loader bg to transparent + hide camera
-  .set('#loader', { backgroundColor: 'transparent' }, 1.95)
-  .set('#loader .camera-wrap, #loader .cam-caption, #loader .cam-hint', { opacity: 0 }, 1.95)
+  // 6. SHUTTER CLICK shake — Z rotate + scale jab + bulb peak
+  .to(camMesh.rotation, { z: -0.09, duration: 0.07, ease: 'power3.in' }, 2.0)
+  .to(camMesh.scale, { x: 1.06, y: 1.06, z: 1.06, duration: 0.07 }, 2.0)
+  .to(flashBulbMats, { emissiveIntensity: 4.5, duration: 0.06 }, 2.0)
+  .to(camMesh.rotation, { z: 0.09, duration: 0.07, ease: 'power2.inOut' }, 2.07)
+  .to(camMesh.rotation, { z: 0, duration: 0.08 }, 2.14)
+  .to(camMesh.scale, { x: 1, y: 1, z: 1, duration: 0.15 }, 2.14)
 
-  // 6. Flash fades — page revealed underneath
-  .to('.cam-flash',
-    { opacity: 0, duration: 0.75, ease: 'power2.out' },
-    1.97
-  )
+  // 6. FLASH burst (radial white→cream→rose)
+  .to('.cam-flash', { opacity: 1, duration: 0.06, ease: 'power4.out' }, 2.22)
 
-  // 7. Remove loader from DOM
-  .set('#loader', { display: 'none' }, 2.75);
+  // 7. At flash peak — swap bg, hide canvas behind the white
+  .set('#loader', { backgroundColor: 'transparent' }, 2.29)
+  .set(camMesh, { visible: false }, 2.29)
 
-// Hero reveal — kicks in WHILE flash is fading (page elements coming in via flash)
+  // 8. Flash fades — page revealed
+  .to('.cam-flash', { opacity: 0, duration: 0.75, ease: 'power2.out' }, 2.31)
+
+  // 9. Cleanup loader DOM + dispose 3D resources
+  .set('#loader', { display: 'none' }, 3.1)
+  .add(() => killLoaderScene(), 3.1);
+
+// Hero reveal — starts as flash begins fading (page elements come in via the white)
 loaderTl.add(() => {
   gsap.fromTo('.hero h1 .row .inner', { y: '110%' }, { y: '0%', duration: 1.1, stagger: 0.08, ease: 'power4.out' });
   gsap.fromTo('.hero-eyebrow', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' });
   gsap.fromTo('.hero-sub', { opacity: 0, y: 20 }, { opacity: 0.85, y: 0, duration: 0.9, delay: 0.4, ease: 'power3.out' });
   gsap.fromTo('.hero-meta', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, delay: 0.6, ease: 'power3.out' });
-}, 1.97);
+}, 2.31);
 
 /* =========================================================
    CUSTOM CURSOR
